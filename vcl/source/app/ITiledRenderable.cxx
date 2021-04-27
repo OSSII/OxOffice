@@ -48,24 +48,71 @@ const std::map<PointerStyle, OString> gaLOKPointerMap{
     { PointerStyle::VSizeBar, "row-resize" },
     { PointerStyle::Hand, "grab" },
     { PointerStyle::RefHand, "pointer" },
-    // Pen, Magnify, Fill, Rotate
-    // HShear, VShear
-    // Mirror, Crook, Crop, MovePoint, MoveBezierWeight
-    // MoveData
+    { PointerStyle::Pen, "pen" },
+    { PointerStyle::Magnify, "magnify" },
+    { PointerStyle::Rotate, "rotate" },
+    { PointerStyle::HShear, "hshear" },
+    { PointerStyle::VShear, "vshear" },
+    { PointerStyle::Mirror, "mirror" },
+    { PointerStyle::Crook, "crook" },
+    { PointerStyle::Crop, "crop" },
+    { PointerStyle::MovePoint, "movept" },
+    { PointerStyle::MoveBezierWeight, "movebw" },
+    { PointerStyle::MoveData, "movedata" },
     { PointerStyle::CopyData, "copy" },
     { PointerStyle::LinkData, "alias" },
-    // MoveDataLink, CopyDataLink
-    //MoveFile, CopyFile, LinkFile
-    // MoveFileLink, CopyFileLink, MoveFiless, CopyFiles
+    { PointerStyle::MoveDataLink, "movedlnk" },
+    { PointerStyle::CopyDataLink, "copydlnk" },
+    { PointerStyle::MoveFile, "movef" },
+    { PointerStyle::CopyFile, "copyf" },
+    { PointerStyle::LinkFile, "linkf" },
+    { PointerStyle::MoveFileLink, "moveflnk" },
+    { PointerStyle::CopyFileLink, "copyflnk" },
+    { PointerStyle::MoveFiles, "movef2" },
+    { PointerStyle::CopyFiles, "copyf2" },
     { PointerStyle::NotAllowed, "not-allowed" },
-    // DrawLine through DrawCaption
-    // Chart, Detective, PivotCol, PivotRow, PivotField, Chain, ChainNotAllowed
+    { PointerStyle::DrawLine, "dline" },
+    { PointerStyle::DrawRect, "drect" },
+    { PointerStyle::DrawPolygon, "dpolygon" },
+    { PointerStyle::DrawBezier, "dbezier" },
+    { PointerStyle::DrawArc, "darc" },
+    { PointerStyle::DrawPie, "dpie" },
+    { PointerStyle::DrawCircleCut, "dcirccut" },
+    { PointerStyle::DrawEllipse, "dellipse" },
+    { PointerStyle::DrawFreehand, "dfree" },
+    { PointerStyle::DrawConnect, "dconnect" },
+    { PointerStyle::DrawText, "dtext" },
+    { PointerStyle::DrawCaption, "dcapt" },
+    { PointerStyle::Chart, "chart" },
+    // Detective
+    { PointerStyle::PivotCol, "pivotcol" },
+    { PointerStyle::PivotRow, "pivotrow" },
+    { PointerStyle::PivotField, "pivotfld" },
+    { PointerStyle::Chain, "chain" },
+    { PointerStyle::ChainNotAllowed, "chainnot" },
     // TimeEventMove, TimeEventSize
-    // AutoScrollN through AutoScrollNSWE
+    { PointerStyle::AutoScrollN, "asn"},
+    { PointerStyle::AutoScrollS, "ass"},
+    { PointerStyle::AutoScrollW, "asw"},
+    { PointerStyle::AutoScrollE, "ase"},
+    { PointerStyle::AutoScrollNW, "asnw"},
+    { PointerStyle::AutoScrollNE, "asne"},
+    { PointerStyle::AutoScrollSW, "assw"},
+    { PointerStyle::AutoScrollSE, "asse"},
+    { PointerStyle::AutoScrollNS, "asns"},
+    { PointerStyle::AutoScrollWE, "aswe"},
+    { PointerStyle::AutoScrollNSWE, "asnswe"},
     // Airbrush
-    { PointerStyle::TextVertical, "vertical-text" }
-    // Pivot Delete, TabSelectS through TabSelectSW
-    // PaintBrush, HideWhiteSpace, ShowWhiteSpace
+    { PointerStyle::TextVertical, "vertical-text" },
+    { PointerStyle::PivotDelete, "pivotdel" },
+    { PointerStyle::TabSelectS, "tblsels" },
+    { PointerStyle::TabSelectE, "tblsele" },
+    { PointerStyle::TabSelectSE, "tblsele" },
+    { PointerStyle::TabSelectW, "tblselw" },
+    { PointerStyle::TabSelectSW, "tblselsw" },
+    // PaintBrush
+    { PointerStyle::HideWhitespace, "wshide"},
+    { PointerStyle::ShowWhitespace, "wsshow"}
 };
 #ifdef _MSC_VER
 #pragma warning(pop)
