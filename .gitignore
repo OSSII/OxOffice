@@ -41,7 +41,7 @@
 /ChangeLog
 /config.Build.log
 /config.Build.warn
-/config.guess
+#/config.guess
 /config.log
 /config.status
 /config.parms
@@ -93,14 +93,14 @@ eclipsesettingfile.xml
 .cxx_tags
 .yavide_proj
 .yavide_session
-.vscode
+#.vscode
 *.code-workspace
 .mold-*
 
 # things below this point are targeted for elimination
 
 #stuff that we should no generated where they are
-/desktop/scripts/soffice.sh
+#/desktop/scripts/soffice.sh
 /intltool-extract.in
 /intltool-merge.in
 /intltool-update.in
@@ -141,7 +141,7 @@ DerivedData
 *.opensdf
 *.vcxproj*
 /.vs
-/.vscode
+#/.vscode
 *.VC.db
 LibreOffice.VC.VC.opendb
 
