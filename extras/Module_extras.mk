@@ -60,6 +60,7 @@ $(eval $(call gb_Module_add_targets,extras,\
 
 $(eval $(call gb_Module_add_targets,extras,\
 	CustomTarget_opensymbol \
+	CustomTarget_OxFonts \
 ))
 
 # vim: set noet sw=4 ts=4:
