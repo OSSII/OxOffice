@@ -1407,7 +1407,7 @@
           <desc>Specifies if single quotes should be replaced.</desc>
           <label>Single quotes - Replace</label>
         </info>
-        <value>true</value>
+        <value>false</value>
       </prop>
       <prop oor:name="SingleQuoteAtStart" oor:type="xs:int">
         <!-- UIHints: Tools  AutoCorrect/AutoFormat  Custom Quotes  Single
@@ -1432,7 +1432,7 @@
           <desc>Specifies if double quotes should be replaced.</desc>
           <label>Double quotes - Replace</label>
         </info>
-        <value>true</value>
+        <value>false</value>
       </prop>
       <prop oor:name="DoubleQuoteAtStart" oor:type="xs:int">
         <!-- UIHints: Tools  AutoCorrect/AutoFormat  Custom Quotes  Double
