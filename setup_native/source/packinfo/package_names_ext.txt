@@ -1,4 +1,4 @@
-%SOLSUREPACKAGEPREFIX%BRANDPACKAGEVERSION-ure	UNO Runtime Environment
+%SOLSUREPACKAGEPREFIX-ure	UNO Runtime Environment
 SUNWcar	Core Architecture, (Root)
 SUNWcsd	Core Solaris Devices
 SUNWcsl	Core Solaris, (Shared Libs)
