@@ -39,7 +39,7 @@ office_root=${office_prefix}/${PREFIX}
 #this symlink is needed to have the API bootstrap functions running right
 ln -sf "${office_root}/program/soffice" "${DESTDIR}/${BINDIR}/${PREFIX}"
 
-if test "${PREFIX}" != libreoffice${PRODUCTVERSION} -a "${PREFIX}" != libreofficedev${PRODUCTVERSION}  ; then
+if test "${PREFIX}" != oxoffice -a "${PREFIX}" != oxofficedev  ; then
     # compat symlinks
     mkdir -p "${DESTDIR}${office_prefix}"
     ln -sf libreoffice${PRODUCTVERSION} "${DESTDIR}${office_root}"
