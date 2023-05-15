@@ -131,7 +131,7 @@ void SAL_CALL JumpListImpl::beginList(const OUString& sApplication)
             "'Math', 'Base', 'Startcenter'.",
             getXWeak(), 1);
     }
-    OUString sApplicationID("TheDocumentFoundation.LibreOffice." + sApplication);
+    OUString sApplicationID("OSSIntegralInstitute.OxOffice." + sApplication);
 
     try
     {
@@ -418,7 +418,7 @@ void SAL_CALL JumpListImpl::deleteList(const OUString& sApplication)
             "'Math', 'Base', 'Startcenter'.",
             getXWeak(), 1);
     }
-    OUString sApplicationID("TheDocumentFoundation.LibreOffice." + sApplication);
+    OUString sApplicationID("OSSIntegralInstitute.OxOffice." + sApplication);
 
     try
     {
@@ -443,7 +443,7 @@ Sequence<JumpListItem> SAL_CALL JumpListImpl::getRemovedItems(const OUString& sA
             "'Math', 'Base', 'Startcenter'.",
             getXWeak(), 1);
     }
-    OUString sApplicationID("TheDocumentFoundation.LibreOffice." + sApplication);
+    OUString sApplicationID("OSSIntegralInstitute.OxOffice." + sApplication);
 
     std::vector<JumpListItem> removedItems;
     try
