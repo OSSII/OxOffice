@@ -561,6 +561,13 @@ sub get_fileversion
         require Font::TTF::Font;
         Font::TTF::Font->import;
         my $fnt = Font::TTF::Font->open("<$onefile->{'sourcepath'}");
+        # if the font file is broken, we don't want to die here
+        # return default version is 1.0.0.0
+        if (not defined $fnt)
+        {
+            return "1.0.0.0";
+        }
+
         # 5 is pre-defined name ID for version string - see
         # https://docs.microsoft.com/en-us/typography/opentype/spec/name
         my $ttfdata = $fnt->{'name'}->read->find_name(5);
