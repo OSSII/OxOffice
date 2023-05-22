@@ -17,16 +17,16 @@
  */
 
 [OOO_ARPCONTACTTEMPLATE]
-en-US = "LibreOffice Community"
+en-US = "OSS Integral Institute Co., Ltd."
 
 [OOO_ARPHELPLINKTEMPLATE]
-en-US = "https://www.libreoffice.org/get-help"
+en-US = "https://www.ossii.com.tw/"
 
 [OOO_ARPURLINFOABOUTTEMPLATE]
-en-US = "https://www.libreoffice.org/"
+en-US = "https://www.ossii.com.tw/"
 
 [OOO_ARPURLUPDATEINFOTEMPLATE]
-en-US = "https://www.libreoffice.org/download"
+en-US = "https://www.ossii.com.tw/"
 
 [OOO_STR_NEW_DISPLAY_NAME]
 en-US = "~New"
