@@ -15,6 +15,8 @@
 #   except in compliance with the License. You may obtain a copy of
 #   the License at http://www.apache.org/licenses/LICENSE-2.0 .
 #
+# OxOffice's Upgrade code: 08ec5376-4474-4323-a568-7f367473c69a
+# MODA ODF Application Tools' Upgrade code: 47de8145-2a11-4851-80a0-c0017d166b63
 
 [PRODUCTCODE]
 ar = "{19F11268-068A-488F-B139-848ACA080B94}"
@@ -52,4 +54,4 @@ multiwestern = "{0DECDE88-DD1C-4E9F-8348-19C5BC6FDF26}"
 multiasia = "{122A65B5-E37E-453A-924B-E52B808EDA31}"
 
 [UPGRADECODE]
-en-US = "{4B17E523-5D91-4E69-BD96-7FD81CFA81BB}"
+en-US = "{08ec5376-4474-4323-a568-7f367473c69a}"
