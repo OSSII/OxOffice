@@ -9,7 +9,7 @@ dnl in order to create a configure script.
 # several non-alphanumeric characters, those are split off and used only for the
 # ABOUTBOXPRODUCTVERSIONSUFFIX in openoffice.lst. Why that is necessary, no idea.
 
-AC_INIT([OxOffice],[10.0.1.0],[],[],[https://www.ossii.com.tw/])
+AC_INIT([OxOffice],[10.0.1],[],[],[https://www.ossii.com.tw/])
 
 dnl libnumbertext needs autoconf 2.68, but that can pick up autoconf268 just fine if it is installed
 dnl whereas aclocal (as run by autogen.sh) insists on using autoconf and fails hard
@@ -476,6 +476,8 @@ LIBO_VERSION_MAJOR=$1
 LIBO_VERSION_MINOR=$2
 LIBO_VERSION_MICRO=$3
 LIBO_VERSION_PATCH=$4
+# if LIBO_VERSION_PATCH is empty, set it to 1
+test -z "$LIBO_VERSION_PATCH" && LIBO_VERSION_PATCH=1
 
 LIBO_VERSION_SUFFIX=$5
 
