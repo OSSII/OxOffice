@@ -39,6 +39,7 @@
 		// only used if the file doesn't match anything in the compile_commands.json - aka externals
 		// libxml includes just added as example/for reference
 		"C_Cpp.default.includePath": [
+			"${workspaceFolder}/**",
 			"@WORKDIR@/UnpackedTarball/**",
 			"/usr/include/libxml2/"
 		],
