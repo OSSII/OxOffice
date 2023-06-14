@@ -375,10 +375,6 @@ fi
 # glibc breaks rpm unless rpm is build with internal glob-matching (issue 49374)
 # https://bugzilla.redhat.com/beta/show_bug.cgi?id=134362
 %defattr(-, root, root)
-%if "%unixfilename" != "oxoffice" && "%unixfilename" != "oxofficedev"
-# compat symlinks
-%attr(0755,root,root) /opt/%unixfilename
-%endif
 /usr/bin/*
 /usr/share/applications/%unixfilename-base.desktop
 /usr/share/applications/%unixfilename-calc.desktop
