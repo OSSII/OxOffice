@@ -458,7 +458,19 @@ fi
 AC_MSG_RESULT([$PRODUCTNAME])
 AC_SUBST(PRODUCTNAME)
 PRODUCTNAME_WITHOUT_SPACES=$(printf %s "$PRODUCTNAME" | sed 's/ //g')
+AC_MSG_NOTICE([Product name without spaces: $PRODUCTNAME_WITHOUT_SPACES])
+AC_DEFINE_UNQUOTED(PRODUCTNAME_WITHOUT_SPACES, "$PRODUCTNAME_WITHOUT_SPACES", [Product name without spaces])
 AC_SUBST(PRODUCTNAME_WITHOUT_SPACES)
+
+# Convert PRODUCTNAME_WITHOUT_SPACES to lowercase.
+LOWERCASE_PRODUCTNAME_WITHOUT_SPACES=$(printf %s "$PRODUCTNAME_WITHOUT_SPACES" | sed -e 's/\(.*\)/\L\1/')
+AC_DEFINE_UNQUOTED(LOWERCASE_PRODUCTNAME_WITHOUT_SPACES, "$LOWERCASE_PRODUCTNAME_WITHOUT_SPACES", [Lowercase product name without spaces])
+AC_SUBST(LOWERCASE_PRODUCTNAME_WITHOUT_SPACES)
+# UNIXROOTNAME equals to LOWERCASE_PRODUCTNAME_WITHOUT_SPACES
+UNIXROOTNAME="$LOWERCASE_PRODUCTNAME_WITHOUT_SPACES"
+AC_MSG_NOTICE([UNIX root name: $UNIXROOTNAME])
+AC_DEFINE_UNQUOTED(UNIXROOTNAME, "$UNIXROOTNAME", [UNIX root name])
+AC_SUBST(UNIXROOTNAME)
 
 dnl ===================================================================
 dnl Our version is defined by the AC_INIT() at the top of this script.
@@ -14167,6 +14179,12 @@ fi
 AC_DEFINE_UNQUOTED(OOO_VENDOR,"$OOO_VENDOR")
 AC_SUBST(OOO_VENDOR)
 
+# Remove spaces and dots from vendor name
+OOO_VENDOR_WITHOUT_SPACES=`echo $OOO_VENDOR | sed -r -e 's/[\.|,| ]//g'`
+AC_MSG_NOTICE([Vendor name without spaces: $OOO_VENDOR_WITHOUT_SPACES])
+AC_DEFINE_UNQUOTED(OOO_VENDOR_WITHOUT_SPACES, "$OOO_VENDOR_WITHOUT_SPACES", [Vendor name without spaces])
+AC_SUBST(OOO_VENDOR_WITHOUT_SPACES)
+
 if test "$_os" = "Android" ; then
     ANDROID_PACKAGE_NAME=
     AC_MSG_CHECKING([for Android package name])
@@ -14761,6 +14779,7 @@ AC_CONFIG_FILES([config_host.mk
                  sysui/desktop/macosx/Info.plist
                  vs-code.code-workspace.template:.vscode/vs-code-template.code-workspace.in])
 
+AC_CONFIG_HEADERS([config_host/config_branding.h])
 AC_CONFIG_HEADERS([config_host/config_buildconfig.h])
 AC_CONFIG_HEADERS([config_host/config_buildid.h])
 AC_CONFIG_HEADERS([config_host/config_box2d.h])
