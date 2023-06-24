@@ -17,6 +17,7 @@
  *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
  */
 
+#include <config_branding.h>
 #include <helper/titlebarupdate.hxx>
 
 #include <properties.h>
@@ -142,8 +143,7 @@ void TitleBarUpdate::impl_updateApplicationID(const css::uno::Reference< css::fr
         else
             sDesktopName = "Startcenter";
 #if defined(_WIN32)
-        // We use a hardcoded product name matching the registry keys so applications can be associated with file types
-        sApplicationID = "OSSIntegralInstitute.OxOffice." + sDesktopName;
+        sApplicationID = OOO_VENDOR_WITHOUT_SPACES "." PRODUCTNAME_WITHOUT_SPACES "." + sDesktopName;
 #else
         sApplicationID = utl::ConfigManager::getProductName().toAsciiLowerCase() + "-" + sDesktopName.toAsciiLowerCase();
 #endif

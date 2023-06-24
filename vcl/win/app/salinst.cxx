@@ -17,6 +17,7 @@
  *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
  */
 
+#include <config_branding.h>
 #include <string.h>
 #include <svsys.h>
 #include <process.h>
@@ -875,7 +876,7 @@ void WinSalInstance::AddToRecentDocumentList(const OUString& rFileUrl, const OUS
 
             if ( !sApplicationName.isEmpty() )
             {
-                OUString sApplicationID("OSSIntegralInstitute.OxOffice." + sApplicationName);
+                OUString sApplicationID(OOO_VENDOR_WITHOUT_SPACES "." PRODUCTNAME_WITHOUT_SPACES "." + sApplicationName);
 
                 SHARDAPPIDINFO info;
                 info.psi = pShellItem;

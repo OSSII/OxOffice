@@ -35,6 +35,6 @@ End
 FolderItemProperty gid_Fip_Smath_AppID
     ShortcutID = gid_Folderitem_Smath;
     Key = "System.AppUserModel.ID";
-    Value = "OSSIntegralInstitute.OxOffice.Math";
+    Value = "%OOO_VENDOR_WITHOUT_SPACES.%PRODUCTNAME_WITHOUT_SPACES.Math";
 End
 #endif

@@ -11,6 +11,7 @@
 #define NTDDI_VERSION NTDDI_WIN8 // needed for IApplicationActivationManager
 #endif
 
+#include <config_branding.h>
 #include <sal/config.h>
 
 #include <comphelper/scopeguard.hxx>
@@ -159,9 +160,9 @@ void CheckFileExtRegistration(weld::Window* pDialogParent)
     }
 
     static const std::pair<LPCWSTR, LPCWSTR> formats[] = {
-        { L".odp", L"OxOffice.ImpressDocument.1" },
-        { L".odt", L"OxOffice.WriterDocument.1" },
-        { L".ods", L"OxOffice.CalcDocument.1" },
+        { L".odp", L"" PRODUCTNAME_WITHOUT_SPACES ".ImpressDocument.1" },
+        { L".odt", L"" PRODUCTNAME_WITHOUT_SPACES ".WriterDocument.1" },
+        { L".ods", L"" PRODUCTNAME_WITHOUT_SPACES ".CalcDocument.1" },
     };
     OUString aNonDefaults;
 
