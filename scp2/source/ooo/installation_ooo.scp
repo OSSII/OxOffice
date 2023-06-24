@@ -22,6 +22,8 @@ Installation gid_Installation_Ooo
     ProductName = "${PRODUCTNAME}";
     ProductVersion = "${PRODUCTVERSION}";
     ProductExtension = "${PRODUCTEXTENSION}";
+    OOO_VENDOR_WITHOUT_SPACES = "${OOO_VENDOR_WITHOUT_SPACES}";
+    PRODUCTNAME_WITHOUT_SPACES = "${PRODUCTNAME_WITHOUT_SPACES}";
     UserDirProductVersion = "${USERDIRPRODUCTVERSION}";
     SxwFormatName = "OpenOffice.org";
     SxwFormatVersion = "1.1";

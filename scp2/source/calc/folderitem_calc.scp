@@ -35,6 +35,6 @@ End
 FolderItemProperty gid_Fip_Scalc_AppID
     ShortcutID = gid_Folderitem_Scalc;
     Key = "System.AppUserModel.ID";
-    Value = "OSSIntegralInstitute.OxOffice.Calc";
+    Value = "%OOO_VENDOR_WITHOUT_SPACES.%PRODUCTNAME_WITHOUT_SPACES.Calc";
 End
 #endif

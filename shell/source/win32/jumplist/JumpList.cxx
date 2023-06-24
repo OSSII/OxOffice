@@ -7,6 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include <config_branding.h>
 #include <sal/config.h>
 
 #include <algorithm>
@@ -131,7 +132,7 @@ void SAL_CALL JumpListImpl::beginList(const OUString& sApplication)
             "'Math', 'Base', 'Startcenter'.",
             getXWeak(), 1);
     }
-    OUString sApplicationID("OSSIntegralInstitute.OxOffice." + sApplication);
+    OUString sApplicationID(OOO_VENDOR_WITHOUT_SPACES "." PRODUCTNAME_WITHOUT_SPACES "." + sApplication);
 
     try
     {
@@ -418,7 +419,7 @@ void SAL_CALL JumpListImpl::deleteList(const OUString& sApplication)
             "'Math', 'Base', 'Startcenter'.",
             getXWeak(), 1);
     }
-    OUString sApplicationID("OSSIntegralInstitute.OxOffice." + sApplication);
+    OUString sApplicationID(OOO_VENDOR_WITHOUT_SPACES "." PRODUCTNAME_WITHOUT_SPACES "." + sApplication);
 
     try
     {
@@ -443,7 +444,7 @@ Sequence<JumpListItem> SAL_CALL JumpListImpl::getRemovedItems(const OUString& sA
             "'Math', 'Base', 'Startcenter'.",
             getXWeak(), 1);
     }
-    OUString sApplicationID("OSSIntegralInstitute.OxOffice." + sApplication);
+    OUString sApplicationID(OOO_VENDOR_WITHOUT_SPACES "." PRODUCTNAME_WITHOUT_SPACES "." + sApplication);
 
     std::vector<JumpListItem> removedItems;
     try

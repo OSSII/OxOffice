@@ -35,6 +35,6 @@ End
 FolderItemProperty gid_Fip_Simpress_AppID
     ShortcutID = gid_Folderitem_Simpress;
     Key = "System.AppUserModel.ID";
-    Value = "OSSIntegralInstitute.OxOffice.Impress";
+    Value = "%OOO_VENDOR_WITHOUT_SPACES.%PRODUCTNAME_WITHOUT_SPACES.Impress";
 End
 #endif

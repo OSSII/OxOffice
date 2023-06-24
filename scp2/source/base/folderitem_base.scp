@@ -35,6 +35,6 @@ End
 FolderItemProperty gid_Fip_Sbase_AppID
     ShortcutID = gid_Folderitem_Sbase;
     Key = "System.AppUserModel.ID";
-    Value = "OSSIntegralInstitute.OxOffice.Base";
+    Value = "%OOO_VENDOR_WITHOUT_SPACES.%PRODUCTNAME_WITHOUT_SPACES.Base";
 End
 #endif
