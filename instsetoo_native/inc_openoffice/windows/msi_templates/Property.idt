@@ -44,6 +44,7 @@ ProgressType3	installs
 Quickstarterlinkname	QUICKSTARTERLINKNAMETEMPLATE
 RebootYesNo	Yes
 ReinstallModeText	omus
+REINSTALLMODE	dmus
 SecureCustomProperties	NEWPRODUCTS;OLDPRODUCTS;WIN81S14;WINMAJORVER
 SetupType	Typical
 SELECT_WORD	0
