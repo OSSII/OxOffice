@@ -421,6 +421,7 @@ $(call gb_WinResTarget_set_rcfile,$(2),include/default)
 $(call gb_WinResTarget_add_defs,$(2),\
 		-DVERVARIANT="$(LIBO_VERSION_PATCH)" \
 		-DRES_APP_VENDOR="$(OOO_VENDOR)" \
+		-DRES_APP_PRODUCTNAME="$(PRODUCTNAME)" \
 		-DORG_NAME="$(call gb_Library_get_filename,$(1))"\
 		-DINTERNAL_NAME="$(subst $(gb_Library_DLLEXT),,$(call gb_Library_get_filename,$(1)))" \
 		-DADDITIONAL_VERINFO1="" \
@@ -438,6 +439,7 @@ $(call gb_WinResTarget_set_rcfile,$(1)/default,include/default)
 $(call gb_WinResTarget_add_defs,$(1)/default,\
 		-DVERVARIANT="$(LIBO_VERSION_PATCH)" \
 		-DRES_APP_VENDOR="$(OOO_VENDOR)" \
+		-DRES_APP_PRODUCTNAME="$(PRODUCTNAME)" \
 		-DORG_NAME="$(call gb_Executable_get_filename,$(1))"\
 		-DINTERNAL_NAME="$(subst $(gb_Executable_EXT),,$(call gb_Executable_get_filename,$(1)))" \
 		-DADDITIONAL_VERINFO1="$(if $(2),VALUE \"FileDescription\"$(COMMA) \"$(2)\\0\")" \
