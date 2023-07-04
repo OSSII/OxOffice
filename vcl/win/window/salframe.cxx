@@ -17,6 +17,9 @@
  *   the License at http://www.apache.org/licenses/LICENSE-2.0 .
  */
 
+#include <i18nlangtag/languagetag.hxx>
+#include <i18nlangtag/mslangid.hxx>
+
 #include <com/sun/star/lang/XMultiServiceFactory.hpp>
 #include <com/sun/star/container/XIndexAccess.hpp>
 #include <com/sun/star/beans/XPropertySet.hpp>
@@ -2882,6 +2885,12 @@ void WinSalFrame::UpdateSettings( AllSettings& rSettings )
     }
 
     ReleaseDC( nullptr, hDC );
+
+    bool bBrokenLangFontHeight = MsLangId::isCJK(Application::GetSettings().GetUILanguageTag().getLanguageType());
+    if (bBrokenLangFontHeight && aMenuFont.GetFontHeight() < 12)
+    {
+        aMenuFont.SetFontHeight(12);
+    }
 
     aStyleSettings.SetToolbarIconSize(ToolbarIconSize::Large);
 
