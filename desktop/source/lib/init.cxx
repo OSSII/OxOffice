@@ -5745,18 +5745,22 @@ static char* getLanguages(LibreOfficeKitDocument* pThis, const char* pCommand)
 
     if (xContext.is())
     {
-        // First try to get the document languages
-        getDocLanguages(pThis, aLocales);
-        // If no document languages, try to get the spell checker languages
+        css::uno::Reference<css::linguistic2::XLinguServiceManager2> xLangSrv = css::linguistic2::LinguServiceManager::create(xContext);
+        if (xLangSrv.is())
+        {
+            css::uno::Reference<css::linguistic2::XSpellChecker> xSpell = xLangSrv->getSpellChecker();
+            if (xSpell.is())
+                aLocales = xSpell->getLocales();
+        }
+
+        /* FIXME: To obtain the document languages the spell checker can be disabled,
+           so a future re-work of the getLanguages function is needed in favor to use
+           getDocLanguages */
         if (!aLocales.hasElements())
         {
-            css::uno::Reference<css::linguistic2::XLinguServiceManager2> xLangSrv = css::linguistic2::LinguServiceManager::create(xContext);
-            if (xLangSrv.is())
-            {
-                css::uno::Reference<css::linguistic2::XSpellChecker> xSpell = xLangSrv->getSpellChecker();
-                if (xSpell.is())
-                    aLocales = xSpell->getLocales();
-            }
+            uno::Sequence< css::lang::Locale > aSeq;
+            getDocLanguages(pThis, aSeq);
+            aLocales = aSeq;
         }
     }
 
