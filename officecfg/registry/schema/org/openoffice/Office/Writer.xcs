@@ -1387,7 +1387,7 @@
             <desc>Specifies whether the vertical ruler is displayed.</desc>
             <label>Vertical Ruler</label>
           </info>
-          <value>false</value>
+          <value>true</value>
         </prop>
         <prop oor:name="IsVerticalRulerRight" oor:type="xs:boolean" oor:nillable="false">
           <!-- UIHints: Tools - Options - Text document - Layout - [Section] Window -->
