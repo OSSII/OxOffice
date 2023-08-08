@@ -108,7 +108,7 @@
             <desc>Indicates whether to show the rulers at the left and at the top of the working area.</desc>
             <label>Rulers visible</label>
           </info>
-          <value>false</value>
+          <value>true</value>
         </prop>
         <prop oor:name="Helpline" oor:type="xs:boolean" oor:nillable="false">
           <!-- UIHints: Tools - Options - Impress - View - [Section] Display -->
