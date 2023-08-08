@@ -304,6 +304,19 @@ void SwTextShell::ExecSetNumber(SfxRequest const &rReq)
                     pNBOTypeMgr->SetItems( &aSet );
                     pNBOTypeMgr->ApplyNumRule( aNewSvxNumRule, nChosenItemIdx - 1, nActNumLvl );
 
+                    // BulletPopup followdby use SPACE
+                    if (nSlot == FN_SVX_SET_BULLET)
+                    {
+                        sal_uInt8 k;
+                        for( k = 0; k < MAXLEVEL; ++k )
+                        {
+                            SvxNumberFormat bFmt(aNewSvxNumRule.GetLevel(k));
+                            bFmt.SetLabelFollowedBy( SvxNumberFormat::SPACE ); // Bullet use SPACE
+                            aNewSvxNumRule.SetLevel(k, bFmt);
+                            pNBOTypeMgr->RelplaceNumRule( aNewSvxNumRule, nChosenItemIdx - 1, nActNumLvl );
+                         }
+                    }
+
                     aNewNumRule.SetSvxRule( aNewSvxNumRule, GetShell().GetDoc() );
                     aNewNumRule.SetAutoRule( true );
                     const bool bCreateNewList = ( pNumRuleAtCurrentSelection == nullptr );

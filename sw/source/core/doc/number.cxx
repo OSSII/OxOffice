@@ -379,7 +379,7 @@ SwNumRule::SwNumRule( OUString aNm,
     mbUsedByRedline( false ),
     meDefaultNumberFormatPositionAndSpaceMode( eDefaultNumberFormatPositionAndSpaceMode )
 {
-    if( !snRefCount++ )          // for the first time, initialize
+    if( !snRefCount++ || aNm.indexOf("Bullet") != -1 || aNm.indexOf("Numbering") != -1 ) // for the first time, initialize
     {
         SwNumFormat* pFormat;
         sal_uInt8 n;
@@ -419,7 +419,10 @@ SwNumRule::SwNumRule( OUString aNm,
             pFormat->SetIncludeUpperLevels( 1 );
             pFormat->SetStart( 1 );
             pFormat->SetPositionAndSpaceMode( SvxNumberFormat::LABEL_ALIGNMENT );
-            pFormat->SetLabelFollowedBy( SvxNumberFormat::NOTHING ); // use NOTHING
+            if (aNm.indexOf("Bullet") != -1)
+                pFormat->SetLabelFollowedBy( SvxNumberFormat::SPACE ); // Bullet use SPACE
+            if (aNm.indexOf("Numbering") != -1)
+                pFormat->SetLabelFollowedBy( SvxNumberFormat::NOTHING ); // Numbering use NOTHING
             pFormat->SetListtabPos( cIndentAt[ n ] );
             pFormat->SetFirstLineIndent( cFirstLineIndent );
             pFormat->SetIndentAt( cIndentAt[ n ] );

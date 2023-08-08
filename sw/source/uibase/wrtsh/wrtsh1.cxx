@@ -1554,7 +1554,12 @@ void SwWrtShell::NumOrBulletOn(bool bNum)
         // #i95907#
         const SvxNumberFormat::SvxNumPositionAndSpaceMode ePosAndSpaceMode(
                                     numfunc::GetDefaultPositionAndSpaceMode() );
-        SwNumRule aNumRule( GetUniqueNumRuleName(), ePosAndSpaceMode );
+        OUString newNumRuleName;
+        if (!bNum)
+            newNumRuleName = "Bullet" + GetUniqueNumRuleName();
+        else
+            newNumRuleName = "Numbering" + GetUniqueNumRuleName();
+        SwNumRule aNumRule( newNumRuleName, ePosAndSpaceMode );
         // Append the character template at the numbering.
         SwCharFormat* pChrFormat;
         SwDocShell* pDocSh = GetView().GetDocShell();
