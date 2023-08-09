@@ -32,6 +32,7 @@
 #include <unotools/configmgr.hxx>
 #include <svtools/ehdl.hxx>
 #include <comphelper/processfactory.hxx>
+#include <comphelper/lok.hxx>
 #include <osl/module.hxx>
 #include <cppuhelper/implbase.hxx>
 #include <cppuhelper/supportsservice.hxx>
@@ -181,8 +182,14 @@ void SfxApplication::Initialize_Impl()
     pImpl->mxAppDispatch = new SfxStatusDispatcher;
 
     // SV-Look
-    Help::EnableContextHelp();
-    Help::EnableExtHelp();
+    if (!comphelper::LibreOfficeKit::isActive())
+    {
+        Help::EnableContextHelp();
+        Help::EnableExtHelp();
+    } else {
+        Help::DisableContextHelp();
+        Help::DisableExtHelp();
+    }
 
     pImpl->m_pToolsErrorHdl.emplace(
         RID_ERRHDL, ErrCodeArea::Io, ErrCodeArea::Vcl);
