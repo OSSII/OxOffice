@@ -16,6 +16,8 @@ $(eval $(call gb_Package_add_file,extras_fonts,$(LIBO_SHARE_FOLDER)/fonts/truety
 $(eval $(call gb_Package_add_files,extras_fonts,$(LIBO_SHARE_FOLDER)/fonts/truetype,\
 	SourceHanSans-Regular.ttc \
 	SourceHanSans-Bold.ttc \
+	SourceHanSerif-Regular.ttc \
+	SourceHanSerif-Bold.ttc \
 	TW-Kai-98_1.ttf \
 	TW-Kai-Ext-B-98_1.ttf \
 	TW-Sung-98_1.ttf \

@@ -1,0 +1,220 @@
+	<!--
+		If the font name contains "Noto Serif CJK TC",
+		replace it with "Source Han Serif TC"
+	-->
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>Noto Serif CJK TC</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif TC</string>
+		</edit>
+	</match>
+
+	<!--
+		If the font name contains "Noto Serif CJK HK",
+		replace it with "Source Han Serif HC"
+	-->
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>Noto Serif CJK HK</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif HC</string>
+		</edit>
+	</match>
+
+	<!--
+		If the font name contains "Noto Serif CJK SC",
+		replace it with "Source Han Serif SC"
+	-->
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>Noto Serif CJK SC</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif SC</string>
+		</edit>
+	</match>
+
+	<!--
+		If the font name contains "Noto Serif CJK JP",
+		replace it with "Source Han Serif"
+	-->
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>Noto Serif CJK JP</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif</string>
+		</edit>
+	</match>
+
+	<!--
+		If the font name contains "Noto Serif CJK KR",
+		replace it with "Source Han Serif K"
+	-->
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>Noto Serif CJK KR</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif K</string>
+		</edit>
+	</match>
+
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>宋</string>
+		</test>
+		<test name="lang" compare="eq">
+			<string>zh-tw</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif TC</string>
+		</edit>
+	</match>
+
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>宋</string>
+		</test>
+		<test name="lang" compare="eq">
+			<string>zh-hk</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif HC</string>
+		</edit>
+	</match>
+
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>宋</string>
+		</test>
+		<test name="lang" compare="eq">
+			<string>zh-mo</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif TC</string>
+		</edit>
+	</match>
+
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>宋</string>
+		</test>
+		<test name="lang" compare="eq">
+			<string>zh-cn</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif SC</string>
+		</edit>
+	</match>
+
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>宋</string>
+		</test>
+		<test name="lang" compare="eq">
+			<string>zh-sq</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif SC</string>
+		</edit>
+	</match>
+
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>宋</string>
+		</test>
+		<test name="lang" compare="eq">
+			<string>zh-my</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif SC</string>
+		</edit>
+	</match>
+
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>明</string>
+		</test>
+		<test name="lang" compare="eq">
+			<string>zh-tw</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif TC</string>
+		</edit>
+	</match>
+
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>明</string>
+		</test>
+		<test name="lang" compare="eq">
+			<string>zh-hk</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif HC</string>
+		</edit>
+	</match>
+
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>明</string>
+		</test>
+		<test name="lang" compare="eq">
+			<string>zh-mo</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif TC</string>
+		</edit>
+	</match>
+
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>明</string>
+		</test>
+		<test name="lang" compare="eq">
+			<string>zh-cn</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif SC</string>
+		</edit>
+	</match>
+
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>明</string>
+		</test>
+		<test name="lang" compare="eq">
+			<string>zh-sq</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif SC</string>
+		</edit>
+	</match>
+
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>明</string>
+		</test>
+		<test name="lang" compare="eq">
+			<string>zh-my</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif SC</string>
+		</edit>
+	</match>
+
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>明</string>
+		</test>
+		<test name="lang" compare="eq">
+			<string>ja</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>Source Han Serif</string>
+		</edit>
+	</match>
