@@ -1,0 +1,12 @@
+	<!--
+		If the font name contains the character "楷",
+		replace it with TW-Kai(全字庫正楷體)
+	-->
+	<match target="pattern">
+		<test name="family" compare="contains">
+			<string>楷</string>
+		</test>
+		<edit name="family" mode="append" binding="same">
+			<string>TW-Kai</string>
+		</edit>
+	</match>

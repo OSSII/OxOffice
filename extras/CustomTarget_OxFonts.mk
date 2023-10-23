@@ -12,6 +12,8 @@ $(eval $(call gb_CustomTarget_CustomTarget,extras/fonts))
 $(eval $(call gb_CustomTarget_register_targets,extras/fonts, \
 	SourceHanSans-Regular.ttc \
 	SourceHanSans-Bold.ttc \
+	SourceHanSerif-Regular.ttc \
+	SourceHanSerif-Bold.ttc \
 	TW-Kai-98_1.ttf \
 	TW-Kai-Ext-B-98_1.ttf \
 	TW-Sung-98_1.ttf \
@@ -24,6 +26,14 @@ $(call gb_CustomTarget_get_workdir,extras/fonts)/SourceHanSans-Regular.ttc : \
 
 $(call gb_CustomTarget_get_workdir,extras/fonts)/SourceHanSans-Bold.ttc : \
 		$(SRCDIR)/extras/source/truetype/SourceHanSans/SourceHanSans-Bold.ttc
+	cp $< $@
+
+$(call gb_CustomTarget_get_workdir,extras/fonts)/SourceHanSerif-Regular.ttc : \
+		$(SRCDIR)/extras/source/truetype/SourceHanSerif/SourceHanSerif-Regular.ttc
+	cp $< $@
+
+$(call gb_CustomTarget_get_workdir,extras/fonts)/SourceHanSerif-Bold.ttc : \
+		$(SRCDIR)/extras/source/truetype/SourceHanSerif/SourceHanSerif-Bold.ttc
 	cp $< $@
 
 $(call gb_CustomTarget_get_workdir,extras/fonts)/TW-Kai-98_1.ttf : \
