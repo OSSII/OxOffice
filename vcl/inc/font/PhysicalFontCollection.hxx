@@ -96,6 +96,8 @@ private:
 
     vcl::font::PhysicalFontFamily* ImplFindFontFamilyOfDefaultFont() const;
 
+    vcl::font::PhysicalFontFamily* ImplFindFontFamilyByCJKFeatures( vcl::font::FontSelectPattern& ) const;
+
 };
 
 }

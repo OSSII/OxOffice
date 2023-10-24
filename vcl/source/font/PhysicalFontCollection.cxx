@@ -954,6 +954,120 @@ static bool FindMetricCompatibleFont(FontSelectPattern& rFontSelData)
     return false;
 }
 
+struct CJKFontFeature
+{
+    OUString maFeatureName;
+    std::map<LanguageType, OUString> maFontNames;
+    OUString maFinalFallbackFontName;
+};
+
+// TODO: Use dynamic lists.
+std::vector<CJKFontFeature> aCJKFeaturesMap =
+{
+    {
+        u"明;宋",
+        {
+            { LANGUAGE_CHINESE_TRADITIONAL, u"思源宋體;Source Han Serif TC" },
+            { LANGUAGE_CHINESE_HONGKONG,    u"思源宋體 香港;Source Han Serif HC" },
+            { LANGUAGE_CHINESE_MACAU,       u"思源宋體 香港;Source Han Serif HC" },
+            { LANGUAGE_CHINESE_SIMPLIFIED,  u"思源宋体;Source Han Serif SC" },
+            { LANGUAGE_CHINESE_SINGAPORE,   u"思源宋体;Source Han Serif SC" },
+            { LANGUAGE_JAPANESE,            u"源ノ明朝;Source Han Serif" },
+            { LANGUAGE_KOREAN,              u"본명조;Source Han Serif K" },
+        },
+        u"全字庫正宋體;TW-Sung"
+    },
+    {
+        u"黑",
+        {
+            { LANGUAGE_CHINESE_TRADITIONAL, u"思源黑體;Source Han Sans TC" },
+            { LANGUAGE_CHINESE_HONGKONG,    u"思源黑體 香港;Source Han Sans HC" },
+            { LANGUAGE_CHINESE_MACAU,       u"思源黑體 香港;Source Han Sans HC" },
+            { LANGUAGE_CHINESE_SIMPLIFIED,  u"思源黑体;Source Han Sans SC" },
+            { LANGUAGE_CHINESE_SINGAPORE,   u"思源黑体;Source Han Sans SC" },
+            { LANGUAGE_JAPANESE,            u"源ノ角ゴシック;Source Han Sans" },
+            { LANGUAGE_KOREAN,              u"본고딕;Source Han Sans K" },
+        },
+        u"思源黑體;Source Han Sans TC"
+    },
+    {
+        u"楷",
+        {
+            { LANGUAGE_CHINESE_TRADITIONAL, u"標楷體;DFKai-sb;標楷體-繁;BiauKai" },
+            { LANGUAGE_CHINESE_HONGKONG,    u"標楷體;DFKai-sb;標楷體-繁;BiauKai" },
+            { LANGUAGE_CHINESE_MACAU,       u"標楷體;DFKai-sb;標楷體-繁;BiauKai" },
+            { LANGUAGE_CHINESE_SIMPLIFIED,  u"楷体;SimKai;楷体-简;Kai" },
+            { LANGUAGE_CHINESE_SINGAPORE,   u"楷体;SimKai;楷体-简;Kai" },
+        },
+        u"全字庫正楷體;TW-Kai"
+    }
+};
+
+const std::vector<std::pair<OUString, OUString>> aNotoCJKCompatibleMap =
+{
+    // Corresponds Google Noto Serif CJK font to Source Han Serif font.
+    { "Noto Serif CJK TC", u"思源宋體;Source Han Serif TC" },
+    { "Noto Serif CJK HK", u"思源宋體 香港;Source Han Serif HC" },
+    { "Noto Serif CJK SC", u"思源宋体;Source Han Serif SC" },
+    { "Noto Serif CJK JP", u"源ノ明朝;Source Han Serif" },
+    { "Noto Serif CJK KR", u"본명조;Source Han Serif K" },
+    // Corresponds Google Noto Sans CJK font to Source Han Sans font.
+    { "Noto Sans CJK TC", u"思源黑體;Source Han Sans TC" },
+    { "Noto Sans CJK HK", u"思源黑體 香港;Source Han Sans HC" },
+    { "Noto Sans CJK SC", u"思源黑体;Source Han Sans SC" },
+    { "Noto Sans CJK JP", u"源ノ角ゴシック;Source Han Sans" },
+    { "Noto Sans CJK KR", u"본고딕;Source Han Sans K" },
+    { "Noto Sans Mono CJK TC", u"思源黑體 HW;Source Han Sans HW TC" },
+    { "Noto Sans Mono CJK HK", u"思源黑體 香港 HW;Source Han Sans HW HC" },
+    { "Noto Sans Mono CJK SC", u"思源黑体 HW;Source Han Sans HW SC" },
+    { "Noto Sans Mono CJK JP", u"源ノ角ゴシック HW;Source Han Sans HW" },
+    { "Noto Sans Mono CJK KR", u"본고딕 HW;Source Han Sans HW K" },
+};
+
+PhysicalFontFamily* PhysicalFontCollection::ImplFindFontFamilyByCJKFeatures(FontSelectPattern& rFSD) const
+{
+    PhysicalFontFamily* pFoundData = nullptr;
+    // Find the matching font based on the conditions of aCJKFeaturesMap.
+    for (const auto& aFeature : aCJKFeaturesMap)
+    {
+        // Based on the maFeatureName of aFeature,
+        // find the matching font (can have multiple properties, separated by semicolons)
+        for (sal_Int32 nTokenPos = 0 ; nTokenPos != -1 ;)
+        {
+            // Take out each feature in order.
+            std::u16string_view aFeatureName = GetNextFontToken(aFeature.maFeatureName, nTokenPos);
+            // If the font to be matched contains the specified feature.
+            if (rFSD.maSearchName.indexOf(aFeatureName) != -1)
+            {
+                // Then find the corresponding font according to the language family.
+                auto it = aFeature.maFontNames.find(rFSD.meLanguage);
+                // A font corresponding to the language family has been found.
+                if (it != aFeature.maFontNames.end())
+                    pFoundData = FindFontFamilyByTokenNames(it->second);
+                else // If the corresponding font is not found, use the FinalFallback font.
+                    pFoundData = FindFontFamilyByTokenNames(aFeature.maFinalFallbackFontName);
+
+                // There are corresponding entity fonts.
+                if (pFoundData)
+                    return pFoundData;
+            }
+        }
+    }
+
+    // Is it Noto CJK font?
+    for (const auto& aSub : aNotoCJKCompatibleMap)
+    {
+        if (rFSD.maSearchName == GetEnglishSearchFontName(aSub.first))
+        {
+            pFoundData = FindFontFamilyByTokenNames(aSub.second);
+            if (pFoundData)
+                return pFoundData;
+        }
+    }
+
+    return pFoundData;
+}
+
 PhysicalFontFamily* PhysicalFontCollection::FindFontFamily(FontSelectPattern& rFSD) const
 {
     // give up if no fonts are available
@@ -1028,6 +1142,11 @@ PhysicalFontFamily* PhysicalFontCollection::FindFontFamily(FontSelectPattern& rF
         // check if the current font name token or its substitute is valid
         PhysicalFontFamily* pFoundData = ImplFindFontFamilyBySearchName(aSearchName);
         if( pFoundData )
+            return pFoundData;
+
+        // CJK feature font matching.
+        pFoundData = ImplFindFontFamilyByCJKFeatures(rFSD);
+        if (pFoundData)
             return pFoundData;
 
         // some systems provide special customization
