@@ -163,14 +163,14 @@ void Window::ImplUpdateGlobalSettings( AllSettings& rSettings, bool bCallHdl ) c
 
     // if the UI is korean, chinese or another locale
     // where the system font size is known to be often too small to
-    // generate readable fonts enforce a minimum font size of 12 points
+    // generate readable fonts enforce a minimum font size of 9 points
     bool bBrokenLangFontHeight = MsLangId::isCJK(Application::GetSettings().GetUILanguageTag().getLanguageType());
     if (bBrokenLangFontHeight)
-        defFontheight = std::max(12, defFontheight);
+        defFontheight = std::max(9, defFontheight);
 
     // i22098, toolfont will be scaled differently to avoid bloated rulers and status bars for big fonts
     int toolfontheight = defFontheight;
-    if( toolfontheight > 12 )
+    if( toolfontheight > 9 )
         toolfontheight = (defFontheight+8) / 2;
 
     aFont = aStyleSettings.GetAppFont();
