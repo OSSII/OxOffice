@@ -20,6 +20,7 @@
 #include <sal/config.h>
 
 #include <memory>
+#include <map>
 
 #include <i18nlangtag/languagetag.hxx>
 #include <i18nlangtag/mslangid.hxx>
@@ -961,43 +962,43 @@ struct CJKFontFeature
     OUString maFinalFallbackFontName;
 };
 
-// TODO: Use dynamic lists.
+// TODO: implement dynamic lists
 std::vector<CJKFontFeature> aCJKFeaturesMap =
 {
     {
-        u"明;宋",
+        u"明;宋;Ming;Sung;Song",
         {
-            { LANGUAGE_CHINESE_TRADITIONAL, u"思源宋體;Source Han Serif TC" },
-            { LANGUAGE_CHINESE_HONGKONG,    u"思源宋體 香港;Source Han Serif HC" },
-            { LANGUAGE_CHINESE_MACAU,       u"思源宋體 香港;Source Han Serif HC" },
-            { LANGUAGE_CHINESE_SIMPLIFIED,  u"思源宋体;Source Han Serif SC" },
-            { LANGUAGE_CHINESE_SINGAPORE,   u"思源宋体;Source Han Serif SC" },
-            { LANGUAGE_JAPANESE,            u"源ノ明朝;Source Han Serif" },
-            { LANGUAGE_KOREAN,              u"본명조;Source Han Serif K" },
+            { LANGUAGE_CHINESE_TRADITIONAL, u"思源宋體;Source Han Serif TC;Noto Serif CJK TC" },
+            { LANGUAGE_CHINESE_HONGKONG,    u"思源宋體 香港;Source Han Serif HC;Noto Serif CJK HK" },
+            { LANGUAGE_CHINESE_MACAU,       u"思源宋體 香港;Source Han Serif HC;Noto Serif CJK HK" },
+            { LANGUAGE_CHINESE_SIMPLIFIED,  u"思源宋体;Source Han Serif SC;Noto Serif CJK SC" },
+            { LANGUAGE_CHINESE_SINGAPORE,   u"思源宋体;Source Han Serif SC;Noto Serif CJK SC" },
+            { LANGUAGE_JAPANESE,            u"源ノ明朝;Source Han Serif;Noto Serif CJK JP" },
+            { LANGUAGE_KOREAN,              u"본명조;Source Han Serif K;Noto Serif CJK KR" },
         },
         u"全字庫正宋體;TW-Sung"
     },
     {
-        u"黑",
+        u"黑;Hei",
         {
-            { LANGUAGE_CHINESE_TRADITIONAL, u"思源黑體;Source Han Sans TC" },
-            { LANGUAGE_CHINESE_HONGKONG,    u"思源黑體 香港;Source Han Sans HC" },
-            { LANGUAGE_CHINESE_MACAU,       u"思源黑體 香港;Source Han Sans HC" },
-            { LANGUAGE_CHINESE_SIMPLIFIED,  u"思源黑体;Source Han Sans SC" },
-            { LANGUAGE_CHINESE_SINGAPORE,   u"思源黑体;Source Han Sans SC" },
-            { LANGUAGE_JAPANESE,            u"源ノ角ゴシック;Source Han Sans" },
-            { LANGUAGE_KOREAN,              u"본고딕;Source Han Sans K" },
+            { LANGUAGE_CHINESE_TRADITIONAL, u"思源黑體;Source Han Sans TC;Noto Sans CJK TC" },
+            { LANGUAGE_CHINESE_HONGKONG,    u"思源黑體 香港;Source Han Sans HC;Noto Sans CJK HK" },
+            { LANGUAGE_CHINESE_MACAU,       u"思源黑體 香港;Source Han Sans HC;Noto Sans CJK HK" },
+            { LANGUAGE_CHINESE_SIMPLIFIED,  u"思源黑体;Source Han Sans SC;Noto Sans CJK SC" },
+            { LANGUAGE_CHINESE_SINGAPORE,   u"思源黑体;Source Han Sans SC;Noto Sans CJK SC" },
+            { LANGUAGE_JAPANESE,            u"源ノ角ゴシック;Source Han Sans;Noto Sans CJK JP" },
+            { LANGUAGE_KOREAN,              u"본고딕;Source Han Sans K;Noto Sans CJK KR" },
         },
         u"思源黑體;Source Han Sans TC"
     },
     {
-        u"楷",
+        u"楷;Kai",
         {
             { LANGUAGE_CHINESE_TRADITIONAL, u"標楷體;DFKai-sb;標楷體-繁;BiauKai" },
             { LANGUAGE_CHINESE_HONGKONG,    u"標楷體;DFKai-sb;標楷體-繁;BiauKai" },
             { LANGUAGE_CHINESE_MACAU,       u"標楷體;DFKai-sb;標楷體-繁;BiauKai" },
-            { LANGUAGE_CHINESE_SIMPLIFIED,  u"楷体;SimKai;楷体-简;Kai" },
-            { LANGUAGE_CHINESE_SINGAPORE,   u"楷体;SimKai;楷体-简;Kai" },
+            { LANGUAGE_CHINESE_SIMPLIFIED,  u"楷体;SimKai;楷體-簡;楷体-简;Kai" },
+            { LANGUAGE_CHINESE_SINGAPORE,   u"楷体;SimKai;楷體-簡;楷体-简;Kai" },
         },
         u"全字庫正楷體;TW-Kai"
     }
@@ -1035,7 +1036,7 @@ PhysicalFontFamily* PhysicalFontCollection::ImplFindFontFamilyByCJKFeatures(Font
         for (sal_Int32 nTokenPos = 0 ; nTokenPos != -1 ;)
         {
             // Take out each feature in order.
-            std::u16string_view aFeatureName = GetNextFontToken(aFeature.maFeatureName, nTokenPos);
+            std::u16string_view aFeatureName = GetEnglishSearchFontName(GetNextFontToken(aFeature.maFeatureName, nTokenPos));
             // If the font to be matched contains the specified feature.
             if (rFSD.maSearchName.indexOf(aFeatureName) != -1)
             {
