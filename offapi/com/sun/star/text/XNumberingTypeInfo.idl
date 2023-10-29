@@ -41,6 +41,10 @@ published interface XNumberingTypeInfo : com::sun::star::uno::XInterface
     /** returns the corresponding identifier to a numbering type.
     */
     string  getNumberingIdentifier([in]short NumberingType);
+    /** returns the corresponding numbering type to a Microsoft Office compatible identifier.
+        If there is no match, -1 is returned.
+    */
+    short   getMSOCompatibleNumberingType([in]string NumberingIdentifier);
 };
 };};};};
 
