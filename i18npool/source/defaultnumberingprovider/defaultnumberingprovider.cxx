@@ -691,17 +691,17 @@ DefaultNumberingProvider::makeNumberingString( const Sequence<beans::PropertyVal
           case TEXT_NUMBER: // ordinal indicators (1st, 2nd, 3rd, ...)
                natNum = NativeNumberMode::NATNUM12;
                sNatNumParams = "capitalize ordinal-number";
-               locale = aLocale;
+               locale.Language = "en"; // Keep 1st, 2nd, 3rd, ... unchanged with language changes.
                break;
           case TEXT_CARDINAL: // cardinal number names (One, Two, Three, ...)
                natNum = NativeNumberMode::NATNUM12;
                sNatNumParams = "capitalize";
-               locale = aLocale;
+               locale.Language = "en"; // Keep One, Two, Three, ... unchanged with language changes.
                break;
           case TEXT_ORDINAL: // ordinal number names (First, Second, Third, ...)
                natNum = NativeNumberMode::NATNUM12;
                sNatNumParams = "capitalize ordinal";
-               locale = aLocale;
+               locale.Language = "en"; // Keep First, Second, Third, ... unchanged with language changes.
                break;
           case ROMAN_UPPER:
                result += toRoman( number );
@@ -1213,6 +1213,22 @@ sal_Int16 DefaultNumberingProvider::getNumberingType( const OUString& rNumbering
             return aSupportedTypes[i].nType;
         }
     throw RuntimeException();
+}
+
+const std::map<OUString, sal_Int16> aMSOCompatibleNumberingType =
+{
+    { "1st, 2nd, 3rd, ...",        style::NumberingType::TEXT_NUMBER },
+    { "One, Two, Three, ...",      style::NumberingType::TEXT_CARDINAL },
+    { "First, Second, Third, ...", style::NumberingType::TEXT_ORDINAL },
+    { u"１, ２, ３, ...",           style::NumberingType::FULLWIDTH_ARABIC },
+    { u"一, 一零, 一零零, ...",      style::NumberingType::NUMBER_DIGITAL2_KO },
+    { u"一, 十, 一百(繁), ...",      style::NumberingType::NUMBER_LOWER_ZH },
+};
+
+sal_Int16 DefaultNumberingProvider::getMSOCompatibleNumberingType( const OUString& rNumberingIdentifier )
+{
+    auto it = aMSOCompatibleNumberingType.find(rNumberingIdentifier);
+    return (it != aMSOCompatibleNumberingType.end()) ? it->second : -1;
 }
 
 sal_Bool DefaultNumberingProvider::hasNumberingType( const OUString& rNumberingIdentifier )

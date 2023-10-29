@@ -700,9 +700,15 @@ bool SvXMLUnitConverter::convertNumFormat(
     if( bExt )
     {
         Reference < XNumberingTypeInfo > xInfo = getNumTypeInfo();
-        if( xInfo.is() && xInfo->hasNumberingType( rNumFmt ) )
+        if( xInfo.is() )
         {
-            rType = xInfo->getNumberingType( rNumFmt );
+            if( xInfo->hasNumberingType( rNumFmt ) )
+                rType = xInfo->getNumberingType( rNumFmt );
+            else // Maybe the file was edited in Microsoft Office and saved in Open Document format.
+            {
+                const sal_Int16 nType = xInfo->getMSOCompatibleNumberingType( rNumFmt );
+                rType = nType == -1 ? NumberingType::ARABIC : nType;
+            }
         }
         else
         {

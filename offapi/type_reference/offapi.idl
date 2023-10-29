@@ -15287,6 +15287,7 @@ module com {
      short getNumberingType([in] string NumberingIdentifier);
      boolean hasNumberingType([in] string NumberingIdentifier);
      string getNumberingIdentifier([in] short NumberingType);
+     short getMSOCompatibleNumberingType([in] string NumberingIdentifier);
     };
     published interface XRedline {
      interface ::com::sun::star::uno::XInterface;

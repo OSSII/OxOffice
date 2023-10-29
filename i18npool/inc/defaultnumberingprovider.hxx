@@ -69,6 +69,7 @@ public:
     virtual sal_Int16 SAL_CALL getNumberingType( const OUString& NumberingIdentifier ) override;
     virtual sal_Bool SAL_CALL hasNumberingType( const OUString& NumberingIdentifier ) override;
     virtual OUString SAL_CALL getNumberingIdentifier( sal_Int16 NumberingType ) override;
+    virtual sal_Int16 SAL_CALL getMSOCompatibleNumberingType( const OUString& NumberingIdentifier ) override;
 
     //XServiceInfo
     virtual OUString SAL_CALL getImplementationName() override;
