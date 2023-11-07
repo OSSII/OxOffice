@@ -268,6 +268,10 @@ void FontList::ImplInsertFonts(OutputDevice* pDevice, bool bInsertData)
         ImplFontListNameInfo*   pData;
         sal_uInt32              nIndex;
         aSearchName = ImplMakeSearchString(aSearchName);
+        // If the font name contains ext-b or extb, it will not be added to the font list.
+        if (aSearchName.indexOf("ext-b") != -1 || aSearchName.indexOf("extb") != -1)
+            continue;
+
         pData = ImplFind( aSearchName, &nIndex );
 
         if ( !pData )
