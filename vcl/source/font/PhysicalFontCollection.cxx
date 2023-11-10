@@ -22,6 +22,7 @@
 #include <memory>
 #include <map>
 
+#include <rtl/ustrbuf.hxx>
 #include <i18nlangtag/languagetag.hxx>
 #include <i18nlangtag/mslangid.hxx>
 #include <unotools/configmgr.hxx>
@@ -962,6 +963,22 @@ struct CJKFontFeature
     OUString maFinalFallbackFontName;
 };
 
+/*
+   It is recommended that CJK users install Source Han fonts,
+   because Source Han fonts provides CJK font names.
+   Compared with Noto CJK font which only has English name,
+   it is more intuitive to use.
+   Source Han Serif and Source Han Sans have been built into
+   MODA ODF Application Tools and OxOffice.
+   Therefore, it can directly replace Noto CJK fonts,
+   as well as Ming, Song, Hei and other fonts,
+   greatly reducing the problem of weird font styles.
+
+   The only alternative font for the Kai type is TW Kai,
+   so the Kai type of each language basically lists the default Kai type of each OS.
+   If it cannot be found, TW Kai will be used.
+*/
+
 // TODO: implement dynamic lists
 std::vector<CJKFontFeature> aCJKFeaturesMap =
 {
@@ -994,9 +1011,9 @@ std::vector<CJKFontFeature> aCJKFeaturesMap =
     {
         u"楷;Kai",
         {
-            { LANGUAGE_CHINESE_TRADITIONAL, u"標楷體;DFKai-sb;標楷體-繁;BiauKai" },
-            { LANGUAGE_CHINESE_HONGKONG,    u"標楷體;DFKai-sb;標楷體-繁;BiauKai" },
-            { LANGUAGE_CHINESE_MACAU,       u"標楷體;DFKai-sb;標楷體-繁;BiauKai" },
+            { LANGUAGE_CHINESE_TRADITIONAL, u"標楷體;DFKai-SB;標楷體-繁;BiauKai" },
+            { LANGUAGE_CHINESE_HONGKONG,    u"標楷體;DFKai-SB;標楷體-繁;BiauKai" },
+            { LANGUAGE_CHINESE_MACAU,       u"標楷體;DFKai-SB;標楷體-繁;BiauKai" },
             { LANGUAGE_CHINESE_SIMPLIFIED,  u"楷体;SimKai;楷體-簡;楷体-简;Kai" },
             { LANGUAGE_CHINESE_SINGAPORE,   u"楷体;SimKai;楷體-簡;楷体-简;Kai" },
         },
@@ -1004,7 +1021,7 @@ std::vector<CJKFontFeature> aCJKFeaturesMap =
     }
 };
 
-const std::vector<std::pair<OUString, OUString>> aNotoCJKCompatibleMap =
+const std::map<OUString, OUString> aNotoCJKCompatibleMap =
 {
     // Corresponds Google Noto Serif CJK font to Source Han Serif font.
     { "Noto Serif CJK TC", u"思源宋體;Source Han Serif TC" },
@@ -1036,16 +1053,18 @@ PhysicalFontFamily* PhysicalFontCollection::ImplFindFontFamilyByCJKFeatures(Font
         for (sal_Int32 nTokenPos = 0 ; nTokenPos != -1 ;)
         {
             // Take out each feature in order.
-            std::u16string_view aFeatureName = GetEnglishSearchFontName(GetNextFontToken(aFeature.maFeatureName, nTokenPos));
+            OUStringBuffer aTokenName(GetNextFontToken(aFeature.maFeatureName, nTokenPos));
+            OUString aFeatureName = aTokenName.makeStringAndClear();
             // If the font to be matched contains the specified feature.
-            if (rFSD.maSearchName.indexOf(aFeatureName) != -1)
+            if (rFSD.maTargetName.indexOf(aFeatureName) != -1)
             {
                 // Then find the corresponding font according to the language family.
                 auto it = aFeature.maFontNames.find(rFSD.meLanguage);
                 // A font corresponding to the language family has been found.
                 if (it != aFeature.maFontNames.end())
                     pFoundData = FindFontFamilyByTokenNames(it->second);
-                else // If the corresponding font is not found, use the FinalFallback font.
+                // If the corresponding font is not found, use the FinalFallback font.
+                if (!pFoundData)
                     pFoundData = FindFontFamilyByTokenNames(aFeature.maFinalFallbackFontName);
 
                 // There are corresponding entity fonts.
@@ -1056,14 +1075,12 @@ PhysicalFontFamily* PhysicalFontCollection::ImplFindFontFamilyByCJKFeatures(Font
     }
 
     // Is it Noto CJK font?
-    for (const auto& aSub : aNotoCJKCompatibleMap)
+    auto it = aNotoCJKCompatibleMap.find(rFSD.maTargetName);
+    if (it != aNotoCJKCompatibleMap.end())
     {
-        if (rFSD.maSearchName == GetEnglishSearchFontName(aSub.first))
-        {
-            pFoundData = FindFontFamilyByTokenNames(aSub.second);
-            if (pFoundData)
-                return pFoundData;
-        }
+        pFoundData = FindFontFamilyByTokenNames(it->second);
+        if (pFoundData)
+            return pFoundData;
     }
 
     return pFoundData;
