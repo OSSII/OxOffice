@@ -502,8 +502,6 @@ double SAL_CALL rtl_math_round(double fValue, int nDecPlaces,
     {
         switch (eMode)
         {
-            case rtl_math_RoundingMode_Corrected:
-                return std::round(fValue);
             case rtl_math_RoundingMode_HalfEven:
                 if (const int oldMode = std::fegetround(); std::fesetround(FE_TONEAREST) == 0)
                 {
