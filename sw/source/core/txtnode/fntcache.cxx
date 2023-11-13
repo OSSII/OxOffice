@@ -537,8 +537,8 @@ void SwFntObj::GuessLeading( const SwViewShell&
                 // Those who lie about their Leading, may lie about their
                 // Ascent/Descent as well, hence the Font will be lowered a
                 // little without changing its height.
-                sal_Int32 nDiff = std::min( (sal_Int32)(rMet.GetDescent() - aWinMet.GetDescent()),
-                    (sal_Int32)(aWinMet.GetAscent() - rMet.GetAscent() - nTmpLeading) );
+                sal_Int32 nDiff = std::min( rMet.GetDescent() - aWinMet.GetDescent(),
+                    aWinMet.GetAscent() - rMet.GetAscent() - nTmpLeading );
                 if( nDiff > 0 )
                 {
                     OSL_ENSURE( m_nPrtAscent < USHRT_MAX, "GuessLeading: PrtAscent-Fault" );
