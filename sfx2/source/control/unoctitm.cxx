@@ -911,7 +911,7 @@ static void InterceptLOKStateChangeEvent(sal_uInt16 nSID, SfxViewFrame* pViewFra
     aBuffer.append(aEvent.FeatureURL.Complete);
     aBuffer.append(u'=');
 
-    if (aEvent.FeatureURL.Path == "Bold" ||
+    /* if (aEvent.FeatureURL.Path == "Bold" ||
         aEvent.FeatureURL.Path == "CenterPara" ||
         aEvent.FeatureURL.Path == "CharBackgroundExt" ||
         aEvent.FeatureURL.Path == "ControlCodes" ||
@@ -958,7 +958,7 @@ static void InterceptLOKStateChangeEvent(sal_uInt16 nSID, SfxViewFrame* pViewFra
         aEvent.State >>= bTemp;
         aBuffer.append(bTemp);
     }
-    else if (aEvent.FeatureURL.Path == "CharFontName")
+    else  */if (aEvent.FeatureURL.Path == "CharFontName")
     {
         css::awt::FontDescriptor aFontDesc;
         aEvent.State >>= aFontDesc;
@@ -976,7 +976,7 @@ static void InterceptLOKStateChangeEvent(sal_uInt16 nSID, SfxViewFrame* pViewFra
         aEvent.State >>= aTemplate;
         aBuffer.append(aTemplate.StyleName);
     }
-    else if (aEvent.FeatureURL.Path == "BackColor" ||
+    /* else if (aEvent.FeatureURL.Path == "BackColor" ||
              aEvent.FeatureURL.Path == "BackgroundColor" ||
              aEvent.FeatureURL.Path == "CharBackColor" ||
              aEvent.FeatureURL.Path == "Color" ||
@@ -987,7 +987,7 @@ static void InterceptLOKStateChangeEvent(sal_uInt16 nSID, SfxViewFrame* pViewFra
         sal_Int32 nColor = -1;
         aEvent.State >>= nColor;
         aBuffer.append(nColor);
-    }
+    } */
     else if (aEvent.FeatureURL.Path == "Undo" ||
              aEvent.FeatureURL.Path == "Redo")
     {
@@ -1001,7 +1001,7 @@ static void InterceptLOKStateChangeEvent(sal_uInt16 nSID, SfxViewFrame* pViewFra
             aBuffer.append(aEvent.IsEnabled ? std::u16string_view(u"enabled") : std::u16string_view(u"disabled"));
         }
     }
-    else if (aEvent.FeatureURL.Path == "Cut" ||
+    /* else if (aEvent.FeatureURL.Path == "Cut" ||
              aEvent.FeatureURL.Path == "Copy" ||
              aEvent.FeatureURL.Path == "Paste" ||
              aEvent.FeatureURL.Path == "SelectAll" ||
@@ -1130,7 +1130,7 @@ static void InterceptLOKStateChangeEvent(sal_uInt16 nSID, SfxViewFrame* pViewFra
              aEvent.FeatureURL.Path == "InsertPictureContentControl")
     {
         aBuffer.append(aEvent.IsEnabled ? std::u16string_view(u"enabled") : std::u16string_view(u"disabled"));
-    }
+    } */
     else if (aEvent.FeatureURL.Path == "AssignLayout" ||
              aEvent.FeatureURL.Path == "StatusSelectionMode" ||
              aEvent.FeatureURL.Path == "Signature" ||
@@ -1166,7 +1166,7 @@ static void InterceptLOKStateChangeEvent(sal_uInt16 nSID, SfxViewFrame* pViewFra
             aBuffer.appendAscii(aStream.str().c_str());
         }
     }
-    else if (aEvent.FeatureURL.Path == "StatusDocPos" ||
+    /* else if (aEvent.FeatureURL.Path == "StatusDocPos" ||
              aEvent.FeatureURL.Path == "RowColSelCount" ||
              aEvent.FeatureURL.Path == "StatusPageStyle" ||
              aEvent.FeatureURL.Path == "StateWordCount" ||
@@ -1182,7 +1182,7 @@ static void InterceptLOKStateChangeEvent(sal_uInt16 nSID, SfxViewFrame* pViewFra
         {
             aBuffer.append(aString);
         }
-    }
+    } */
     else if (aEvent.FeatureURL.Path == "StateTableCell")
     {
         if (aEvent.IsEnabled)
@@ -1293,10 +1293,86 @@ static void InterceptLOKStateChangeEvent(sal_uInt16 nSID, SfxViewFrame* pViewFra
     }
     else
     {
-        // Try to send JSON state version
-        SfxLokHelper::sendUnoStatus(pViewFrame->GetViewShell(), pState);
-
-        return;
+        // Modified by Firefly <firefly@ossii.com.tw>
+        const css::uno::Type aType = aEvent.State.getValueType();
+        // aEvent.IsEnabled == false 只能是 disabled
+        if (!aEvent.IsEnabled)
+            aBuffer.append("disabled");
+        // aEvent.State == void 就依據 aEvent.IsEnabled
+        else if (aType == cppu::UnoType<void>::get())
+            aBuffer.append(aEvent.IsEnabled ? std::u16string_view(u"enabled") : std::u16string_view(u"disabled"));
+        // 形態是 boolean
+        else if (aType == cppu::UnoType<bool>::get())
+        {
+            bool aBool = false;
+            aEvent.State >>= aBool;
+            aBuffer.append(aBool);
+        }
+        // 型態是 short
+        else if (aType == cppu::UnoType<sal_Int16>::get())
+        {
+            sal_Int16 aInt16 = 0;
+            aEvent.State >>= aInt16;
+            aBuffer.append(aInt16);
+        }
+        // 型態是 long
+        else if (aType == cppu::UnoType<sal_Int32>::get())
+        {
+            sal_Int32 aInt32 = 0;
+            aEvent.State >>= aInt32;
+            aBuffer.append(aInt32);
+        }
+        // 形態是 OUString
+        else if (aType == cppu::UnoType<OUString>::get())
+        {
+            OUString aString;
+            aEvent.State >>= aString;
+            aBuffer.append(aString);
+        }
+        // 形態是 OUString[]
+        else if (aType == cppu::UnoType<css::uno::Sequence<OUString>>::get())
+        {
+            css::uno::Sequence<OUString> aSeq;
+            aEvent.State >>= aSeq;
+            aBuffer.append(u'[');
+            for (sal_Int32 itSeq = 0; itSeq < aSeq.getLength(); itSeq++)
+            {
+                aBuffer.append("\"" + aSeq[itSeq]);
+                if (itSeq != aSeq.getLength() - 1)
+                    aBuffer.append("\",");
+                else
+                    aBuffer.append("\"");
+            }
+            aBuffer.append(u']');
+        }
+        // 形態是 ss::frame::status::Visibility
+        else if (aType == cppu::UnoType<css::frame::status::Visibility>::get())
+        {
+            css::frame::status::Visibility aVisibility;
+            aEvent.State >>= aVisibility;
+            aBuffer.append("{\"visible\":").append(aVisibility.bVisible).append("}");
+        }
+        // 形態是 css::frame::status::Template
+        else if (aType == cppu::UnoType<css::frame::status::Template>::get())
+        {
+            css::frame::status::Template aTemplate;
+            aEvent.State >>= aTemplate;
+            aBuffer.append(u'{');
+            aBuffer.append("\"StyleName\":\"" + aTemplate.StyleName + "\",");
+            aBuffer.append("\"Value\":" + OUString::number(aTemplate.Value) + ",");
+            aBuffer.append("\"StyleNameIdentifier\":\"" + aTemplate.StyleNameIdentifier + "\"");
+            aBuffer.append(u'}');
+        }
+        else
+        {
+            // 顯示不支援的型態
+            SAL_WARN("lok_StateChange", aEvent.FeatureURL.Complete
+                        << " unsupported type: " << aEvent.State.getValueTypeName()
+                        << ". Try to send JSON state version.");
+            // Try to send JSON state version
+            SfxLokHelper::sendUnoStatus(pViewFrame->GetViewShell(), pState);
+            return;
+        }
     }
 
     OUString payload = aBuffer.makeStringAndClear();
