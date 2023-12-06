@@ -534,10 +534,16 @@ bool ScXMLImportWrapper::Import( ImportFlags nMode, ErrCode& rError )
     }
     else if (nStylesRetval)
         rError = nStylesRetval;
-    else if (nMetaRetval)
+    else if (nMetaRetval) {
+        // follow sd/sw module example, meta.xml and settings.xml just gave warning
         rError = nMetaRetval;
-    else if (nSettingsRetval)
+        bRet = true;
+    }
+    else if (nSettingsRetval) {
+        // follow sd/sw module example, meta.xml and settings.xml just gave warning
         rError = nSettingsRetval;
+        bRet = true;
+    }
     else
         bRet = true;
 
