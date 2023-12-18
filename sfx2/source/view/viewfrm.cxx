@@ -2476,6 +2476,8 @@ bool SfxViewFrame::SwitchToViewShell_Impl
         // save the view data of the old view, so it can be restored later on (when needed)
         SaveCurrentViewData_Impl( nViewId );
 
+        pOldSh->SetDying();
+
         // create and load new ViewShell
         SfxViewShell* pNewSh = LoadViewIntoFrame_Impl(
             *GetObjectShell(),
