@@ -165,6 +165,17 @@ interface GraphSelection
         StateMethod = GetChangePictureState ;
     ]
 
+    SID_OX_SAVE_GRAPHIC
+    [
+        ExecMethod = ExecuteSaveGraphic;
+        StateMethod = GetSaveGraphicState ;
+    ]
+
+    SID_OX_CHANGE_PICTURE
+    [
+        ExecMethod = ExecuteChangePicture ;
+        StateMethod = GetChangePictureState ;
+    ]
 }
 
 

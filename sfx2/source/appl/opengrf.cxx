@@ -38,6 +38,7 @@
 #include <sfx2/strings.hrc>
 #include <sfx2/sfxresid.hxx>
 #include <osl/diagnose.h>
+#include <comphelper/lok.hxx>
 
 
 using namespace ::com::sun::star;
@@ -104,8 +105,14 @@ ErrCode SvxOpenGraphicDialog::Execute()
     ErrCode nImpRet;
     bool    bQuitLoop(false);
 
-    while( !bQuitLoop &&
-           mpImpl->aFileDlg.Execute() == ERRCODE_NONE )
+    bool run = false;
+    if (comphelper::LibreOfficeKit::isActive()) {
+        run = true;
+    } else {
+        run = mpImpl->aFileDlg.Execute() == ERRCODE_NONE? true: false;
+    }
+
+    while( !bQuitLoop && run )
     {
         if( !GetPath().isEmpty() )
         {
@@ -253,6 +260,11 @@ ErrCode SvxOpenGraphicDialog::GetGraphic(Graphic& rGraphic) const
 
 OUString SvxOpenGraphicDialog::GetPath() const
 {
+    if (comphelper::LibreOfficeKit::isActive())
+    {
+        return OUString("file:///tmp/dummy.png");
+    }
+
     return mpImpl->aFileDlg.GetPath();
 }
 

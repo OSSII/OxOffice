@@ -30,6 +30,7 @@
 
 #include <comphelper/processfactory.hxx>
 #include <comphelper/propertyvalue.hxx>
+#include <comphelper/lok.hxx>
 
 #include <com/sun/star/beans/XPropertySet.hpp>
 #include <com/sun/star/beans/PropertyValue.hpp>
@@ -189,7 +190,14 @@ bool lcl_ExecuteFilterDialog( const Sequence< PropertyValue >& rPropsForDialog,
         if( xFilterDialog.is() && xFilterProperties.is() )
         {
             xFilterProperties->setPropertyValues( rPropsForDialog );
-            if( xFilterDialog->execute() )
+
+            bool run = false;
+            if (comphelper::LibreOfficeKit::isActive())
+                run = true;
+            else
+                run = xFilterDialog->execute();
+
+            if( run )
             {
                 bStatus = true;
                 const Sequence< PropertyValue > aPropsFromDialog = xFilterProperties->getPropertyValues();
@@ -273,9 +281,29 @@ OUString GraphicHelper::ExportGraphic(weld::Window* pParent, const Graphic& rGra
     {
         xFilePicker->setCurrentFilter( rGraphicFilter.GetExportFormatName( nDefaultFilter ) ) ;
 
-        if( aDialogHelper.Execute() == ERRCODE_NONE )
+        bool run = false;
+        if (comphelper::LibreOfficeKit::isActive())
+            run = true;
+        else
+            run = aDialogHelper.Execute() == ERRCODE_NONE? true: false;
+
+        if( run )
         {
-            OUString sPath( xFilePicker->getFiles().getConstArray()[0] );
+            OUString sPath = "";
+            if (!comphelper::LibreOfficeKit::isActive())
+            {
+                OUString aPath( xFilePicker->getFiles().getConstArray()[0] );
+                sPath = aPath;
+            }
+            else
+            {
+                // get file filter
+                sal_uInt16 oFilter = rGraphicFilter.GetExportFormatNumber( xFilePicker->getCurrentFilter() );
+                OUString cFilter( rGraphicFilter.GetExportFormatShortName( oFilter ) );
+                OUString bPath = rGraphicName + "." + cFilter;
+                sPath = bPath;
+            }
+
             if( !rGraphicName.isEmpty() &&
                 nDefaultFilter == rGraphicFilter.GetExportFormatNumber( xFilePicker->getCurrentFilter()))
             {
