@@ -20,6 +20,6 @@ $(call gb_CustomTarget_get_workdir,extras/fonts)/opens___.ttf : \
 	$(call gb_Trace_EndRange,$(subst $(WORKDIR)/,,$@),FNT)
 else
 $(call gb_CustomTarget_get_workdir,extras/fonts)/opens___.ttf : \
-		$(TARFILE_LOCATION)/$(OPENSYMBOL_TTF)
+		$(SRCDIR)/extras/source/truetype/symbol/OpenSymbol.ttf
 	cp $< $@
 endif
