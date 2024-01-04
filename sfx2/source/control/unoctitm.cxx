@@ -1308,15 +1308,9 @@ static void InterceptLOKStateChangeEvent(sal_uInt16 nSID, SfxViewFrame* pViewFra
             aEvent.State >>= aBool;
             aBuffer.append(aBool);
         }
-        // 型態是 short
-        else if (aType == cppu::UnoType<sal_Int16>::get())
-        {
-            sal_Int16 aInt16 = 0;
-            aEvent.State >>= aInt16;
-            aBuffer.append(aInt16);
-        }
-        // 型態是 long
-        else if (aType == cppu::UnoType<sal_Int32>::get())
+        // 型態是 short or long
+        else if (aType == cppu::UnoType<sal_Int16>::get() ||
+                 aType == cppu::UnoType<sal_Int32>::get())
         {
             sal_Int32 aInt32 = 0;
             aEvent.State >>= aInt32;
