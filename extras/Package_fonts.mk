@@ -22,6 +22,9 @@ $(eval $(call gb_Package_add_files,extras_fonts,$(LIBO_SHARE_FOLDER)/fonts/truet
 	TW-Kai-Ext-B-98_1.ttf \
 	TW-Sung-98_1.ttf \
 	TW-Sung-Ext-B-98_1.ttf \
+	OxWingdings-Regular.ttf \
+	OxWingdings2-Regular.ttf \
+	OxWingdings3-Regular.ttf \
 ))
 
 # vim: set noet sw=4 ts=4:

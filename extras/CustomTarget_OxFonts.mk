@@ -18,6 +18,9 @@ $(eval $(call gb_CustomTarget_register_targets,extras/fonts, \
 	TW-Kai-Ext-B-98_1.ttf \
 	TW-Sung-98_1.ttf \
 	TW-Sung-Ext-B-98_1.ttf \
+	OxWingdings-Regular.ttf \
+	OxWingdings2-Regular.ttf \
+	OxWingdings3-Regular.ttf \
 ))
 
 $(call gb_CustomTarget_get_workdir,extras/fonts)/SourceHanSans-Regular.ttc : \
@@ -50,6 +53,18 @@ $(call gb_CustomTarget_get_workdir,extras/fonts)/TW-Sung-98_1.ttf : \
 
 $(call gb_CustomTarget_get_workdir,extras/fonts)/TW-Sung-Ext-B-98_1.ttf : \
 		$(SRCDIR)/extras/source/truetype/cns11643/TW-Sung-Ext-B-98_1.ttf
+	cp $< $@
+
+$(call gb_CustomTarget_get_workdir,extras/fonts)/OxWingdings-Regular.ttf : \
+		$(SRCDIR)/extras/source/truetype/OxSymbol/OxWingdings-Regular.ttf
+	cp $< $@
+
+$(call gb_CustomTarget_get_workdir,extras/fonts)/OxWingdings2-Regular.ttf : \
+		$(SRCDIR)/extras/source/truetype/OxSymbol/OxWingdings2-Regular.ttf
+	cp $< $@
+
+$(call gb_CustomTarget_get_workdir,extras/fonts)/OxWingdings3-Regular.ttf : \
+		$(SRCDIR)/extras/source/truetype/OxSymbol/OxWingdings3-Regular.ttf
 	cp $< $@
 
 # vim: set noet sw=4 ts=4:
