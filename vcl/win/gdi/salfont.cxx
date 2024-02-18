@@ -1044,6 +1044,84 @@ static OUString lcl_GetFontFamilyName(std::u16string_view rFontFileURL)
     return OUString(aBuffer + nNameOfs, nPos - nNameOfs, osl_getThreadTextEncoding());
 }
 
+static void lcl_RegisterEUDCFonts()
+{
+    const LanguageType eLang = Application::GetSettings().GetUILanguageTag().getLanguageType();
+    OUString aEUDCKey("EUDC\\");
+    if (MsLangId::isTraditionalChinese(eLang))
+        aEUDCKey += "950";
+    else if (MsLangId::isSimplifiedChinese(eLang))
+        aEUDCKey += "936";
+    else if (MsLangId::isKorean(eLang))
+        aEUDCKey += "949";
+    else if (eLang == LANGUAGE_JAPANESE)
+        aEUDCKey += "932";
+    else // not supported
+        return;
+
+    HKEY hKey;
+    if (RegOpenKeyExW(HKEY_CURRENT_USER, o3tl::toW(aEUDCKey.getStr()), 0, KEY_READ, &hKey) == ERROR_SUCCESS)
+    {
+        DWORD nValues = 0;
+        DWORD nMaxNameLen = 0;
+        DWORD nMaxValueLen = 0;
+
+        if (RegQueryInfoKeyW(hKey, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+            &nValues, &nMaxNameLen, &nMaxValueLen, nullptr, nullptr) == ERROR_SUCCESS && nValues)
+        {
+            auto pValueName = std::unique_ptr<wchar_t[]>(
+                    new wchar_t[nMaxNameLen + 1]);
+            auto pValue = std::unique_ptr<wchar_t[]>(
+                    new wchar_t[nMaxValueLen/sizeof(wchar_t) + 1]);
+
+            std::map<OUString, OUString> aEUDCFontMap; // 字型名稱與造字檔案路徑的對應表
+            std::map<OUString, OUString> aEUDCRelationMap; // 主字型與字型名稱的對應表
+            for (DWORD i = 0 ; i < nValues ; ++i)
+            {
+                DWORD nValueNameLen = nMaxNameLen + 1;
+                DWORD nValueLen = nMaxValueLen + 1;
+                if (RegEnumValueW(hKey, i, pValueName.get(), &nValueNameLen, nullptr, nullptr,
+                    reinterpret_cast<LPBYTE>(pValue.get()), &nValueLen) == ERROR_SUCCESS)
+                {
+                    OUString aMasterFontFamily(o3tl::toU(pValueName.get())); // 主字型
+                    OUString aEUDCFontFile(o3tl::toU(pValue.get())); // 造字檔案
+                    // 轉換成通用的 URL 格式
+                    OUString aEUDCFontPath = "file:///" + aEUDCFontFile.replace('\\', '/');
+                    /*
+                        TODO: 檢查 aEUDCFontPath 是否為絕對路徑
+                              若不是，則檢查是否存在於系統字型目錄中 (C:\Windows\Fonts)
+                              或是使用者字型目錄中 (C:\Users\%USERNAME%\AppData\Local\Microsoft\Windows\Fonts)
+                     */
+
+                    // 取得字型名稱
+                    const OUString aEUDCFontFamily = lcl_GetFontFamilyName(aEUDCFontPath);
+                    // 記錄造字字型
+                    if (!aEUDCFontFamily.isEmpty())
+                    {
+                        aEUDCFontMap[aEUDCFontFamily] = aEUDCFontPath;
+                        aEUDCRelationMap[aMasterFontFamily] = aEUDCFontFamily;
+                    }
+                }
+            }
+
+            // 註冊造字字型
+            for (const auto& [aFamilyName, aFontFile] : aEUDCFontMap)
+            {
+                if (lcl_AddFontResource(*GetSalData(), aFontFile, true) <= 0)
+                {
+                    SAL_WARN("vcl.fonts", "failed to register EUDC font: " << aFontFile);
+                }
+            }
+
+            vcl::font::PhysicalFontCollection* pFontCollection = ImplGetSVData()->maGDIData.mxScreenFontList.get();
+            // 記錄造字字型與主字型的關聯
+            for (const auto& [aMasterFontFamily, aEUDCFontFamily] : aEUDCRelationMap)
+                pFontCollection->SetEUDCRelation(aMasterFontFamily, aEUDCFontFamily);
+        }
+        RegCloseKey(hKey);
+    }
+}
+
 bool WinSalGraphics::AddTempDevFont(vcl::font::PhysicalFontCollection* pFontCollection,
                                     const OUString& rFontFileURL, const OUString& rFontName)
 {
@@ -1124,6 +1202,9 @@ void WinSalGraphics::GetDevFontList( vcl::font::PhysicalFontCollection* pFontCol
 
         // collect fonts in font path that could not be registered
         registerFontsIn(aPath + "/" LIBO_SHARE_FOLDER "/fonts/truetype");
+
+        // register EUDC fonts
+        lcl_RegisterEUDCFonts();
 
         return true;
     });

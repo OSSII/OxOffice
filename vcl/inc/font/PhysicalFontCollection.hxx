@@ -72,6 +72,9 @@ public:
     void                    SetPreMatchHook( vcl::font::PreMatchFontSubstitution* );
     void                    SetFallbackHook( vcl::font::GlyphFallbackFontSubstitution* );
 
+    void                    SetEUDCRelation( const OUString& rMasterFamilyName,
+                                             const OUString& rEUDCFamilyName );
+
     // misc utilities
     std::shared_ptr<PhysicalFontCollection> Clone() const;
     std::unique_ptr<vcl::font::PhysicalFontFaceCollection> GetFontFaceCollection() const;
@@ -95,8 +98,6 @@ private:
     vcl::font::PhysicalFontFamily* ImplFindFontFamilyBySubstFontAttr( const utl::FontNameAttr& ) const;
 
     vcl::font::PhysicalFontFamily* ImplFindFontFamilyOfDefaultFont() const;
-
-    vcl::font::PhysicalFontFamily* ImplFindFontFamilyByCJKFeatures( vcl::font::FontSelectPattern& ) const;
 
 };
 
