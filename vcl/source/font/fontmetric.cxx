@@ -84,13 +84,9 @@ CorrectMetrics* NeedCorrectMetrics(const OUString& rFamilyName)
         sal_Int32 nTokenPos = 0;
         while (nTokenPos != -1)
         {
-            OUStringBuffer aTokenName(GetNextFontToken(rCorrectMetrics.first, nTokenPos));
-            OUString aFamilyName = aTokenName.makeStringAndClear();
-
+            OUString aFamilyName(GetNextFontToken(rCorrectMetrics.first, nTokenPos));
             if (aFamilyName == rFamilyName)
-            {
                 return &rCorrectMetrics.second;
-            }
         }
     }
 
