@@ -14,10 +14,12 @@ $(eval $(call gb_Package_use_customtarget,extras_fonts,extras/fonts))
 $(eval $(call gb_Package_add_file,extras_fonts,$(LIBO_SHARE_FOLDER)/fonts/truetype/opens___.ttf,opens___.ttf))
 
 $(eval $(call gb_Package_add_files,extras_fonts,$(LIBO_SHARE_FOLDER)/fonts/truetype,\
-	SourceHanSans-Regular.ttc \
-	SourceHanSans-Bold.ttc \
-	SourceHanSerif-Regular.ttc \
-	SourceHanSerif-Bold.ttc \
+	SourceHanSansTC-Regular.otf \
+	SourceHanSansTC-Bold.otf \
+	SourceHanSansHWTC-Regular.otf \
+	SourceHanSansHWTC-Bold.otf \
+	SourceHanSerifTC-Regular.otf \
+	SourceHanSerifTC-Bold.otf \
 	TW-Kai-98_1.ttf \
 	TW-Kai-Ext-B-98_1.ttf \
 	TW-Sung-98_1.ttf \
