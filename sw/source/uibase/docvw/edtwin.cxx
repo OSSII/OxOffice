@@ -5164,10 +5164,6 @@ void SwEditWin::MouseButtonUp(const MouseEvent& rMEvt)
                 else if( rMEvt.GetModifier() & KEY_MOD1 )
                     bNoParagraphFormats = true;
             }
-            SwPaM *pCursor = rSh.GetCursor();
-            //if mark to endpara then add paragraphformats
-            if(rSh.SwCursorShell::IsEndPara() && pCursor->HasMark())
-                bNoParagraphFormats = false;
             //execute paste
             pFormatClipboard->Paste( rWrtShell, pPool, bNoCharacterFormats, bNoParagraphFormats );
 
