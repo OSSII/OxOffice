@@ -1218,6 +1218,12 @@ static unsigned char* doc_renderFontOrientation(LibreOfficeKitDocument* pThis,
                           int* pFontWidth,
                           int* pFontHeight,
                           int pOrientation);
+static unsigned char* doc_renderFontOrientationEnhance(LibreOfficeKitDocument* pThis,
+                          const char *pFontName,
+                          const char *pChar,
+                          int* pFontWidth,
+                          int* pFontHeight,
+                          int pOrientation);
 static unsigned char* doc_renderFont(LibreOfficeKitDocument* pThis,
                           const char *pFontName,
                           const char *pChar,
@@ -1440,7 +1446,7 @@ LibLODocument_Impl::LibLODocument_Impl(uno::Reference <css::lang::XComponent> xC
         m_pDocumentClass->getViewIds = doc_getViewIds;
 
         m_pDocumentClass->renderFont = doc_renderFont;
-        m_pDocumentClass->renderFontOrientation = doc_renderFontOrientation;
+        m_pDocumentClass->renderFontOrientation = doc_renderFontOrientationEnhance;
         m_pDocumentClass->getPartHash = doc_getPartHash;
 
         m_pDocumentClass->paintWindow = doc_paintWindow;
@@ -6825,6 +6831,159 @@ unsigned char* doc_renderFontOrientation(SAL_UNUSED_PARAMETER LibreOfficeKitDocu
     return pBuffer;
 }
 
+unsigned char* doc_renderFontOrientationEnhance(SAL_UNUSED_PARAMETER LibreOfficeKitDocument* /*pThis*/,
+                              const char* pFontName,
+                              const char* pChar,
+                              int* pFontWidth,
+                              int* pFontHeight,
+                              int pOrientation)
+{
+    comphelper::ProfileZone aZone("doc_renderFont");
+
+    SolarMutexGuard aGuard;
+    SetLastExceptionMsg();
+
+    OUString aText(OStringToOUString(pChar, RTL_TEXTENCODING_UTF8).trim());
+
+    // 如果 aText 不是 JSON 格式，就退回原來的方式
+    if (!aText.startsWith("{") || !aText.endsWith("}"))
+        return doc_renderFontOrientation(nullptr, pFontName, pChar, pFontWidth, pFontHeight, pOrientation);
+
+    vcl::Font aFont;
+    const int nDefaultFontSize = 25;
+
+    // 把 aText 中的 \n 換成 "\\n"
+    aText = aText.replaceAll("\n", "\\n");
+
+    std::stringstream aStream(OUStringToOString(aText, RTL_TEXTENCODING_UTF8).getStr());
+    boost::property_tree::ptree aTree;
+    try
+    {
+        boost::property_tree::read_json(aStream, aTree);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << "Parser JSON error: " << e.what() << std::endl;
+        return nullptr;
+    }
+
+    aText = OUString::fromUtf8(aTree.get<std::string>("text", "").c_str());
+
+    // 字型名稱
+    OUString aFamilyName = OUString::fromUtf8(aTree.get<std::string>("familyname", pFontName).c_str());
+    aFont = vcl::Font(aFamilyName, Size(0, nDefaultFontSize));
+    // 顏色
+    Color aColor = Color::STRtoRGB(OUString::fromUtf8(aTree.get<std::string>("color", "#000000").c_str()));
+    aFont.SetColor(aColor);
+    // 粗體
+    aFont.SetWeight(aTree.get<bool>("bold", false) ? WEIGHT_BOLD : WEIGHT_NORMAL);
+    // 斜體
+    aFont.SetItalic(aTree.get<bool>("italic", false) ? ITALIC_NORMAL : ITALIC_NONE);
+    // 是否浮雕字
+    std::string aRelief = aTree.get<std::string>("relief", "");
+    if (aRelief == "embossed") // 浮凸
+    {
+        aFont.SetRelief(FontRelief::Embossed);
+    }
+    else if (aRelief == "engraved") // 雕刻
+    {
+            aFont.SetRelief(FontRelief::Engraved);
+    }
+    else // 未指定浮雕字
+    {
+        aFont.SetOutline(aTree.get<bool>("outline", false)); // 輪廓(中空)
+        aFont.SetShadow(aTree.get<bool>("shadow", false)); // 陰影
+    }
+    // TODO:
+    // aTree.get<std::string>("underline", "");
+    // aFont.SetUnderline( FontLineStyle ); // 底線
+
+    // aTree.get<std::string>("overline", "");
+    // aFont.SetOverline( FontLineStyle ); // 頂線
+
+    // aTree.get<std::string>("strikeout", "");
+    // aFont.SetStrikeout( FontStrikeout ); // 刪除線
+
+    // 設定角度
+    aFont.SetOrientation(Degree10(pOrientation));
+    // 設定字型預設大小
+    aFont.SetFontSize(Size(0, nDefaultFontSize));
+
+    auto aDevice(VclPtr<VirtualDevice>::Create(DeviceFormat::DEFAULT));
+    aDevice->SetFont(aFont);
+
+    int nFontWidth;
+    int nFontHeight;
+    tools::Rectangle aRect;
+    if (*pFontWidth > 0 && *pFontHeight > 0)
+    {
+        tools::Rectangle aTmpRect;
+        // 文字允許多行，各行以 \n 分隔
+        std::vector<OUString> aLines = comphelper::string::split(aText, '\n');
+        for (auto &aTmpText : aLines)
+        {
+            aDevice->GetTextBoundRect(aTmpRect, aTmpText);
+            // 找出最寬的文字
+            if (aRect.IsEmpty() || aTmpRect.GetWidth() > aRect.GetWidth())
+                aRect = aTmpRect;
+        }
+
+        double fScaleX = *pFontWidth / static_cast<double>(aRect.BottomRight().X() + 1) / 1.3;
+        double fScaleY = *pFontHeight / static_cast<double>(aRect.BottomRight().Y() + 1) / 1.3;
+        double fScale = std::min(fScaleX, fScaleY);
+        // 重新縮放文字大小
+        aFont.SetFontSize(Size(0, fScale * nDefaultFontSize));
+            aDevice->SetFont(aFont);
+
+        aRect = tools::Rectangle(0, 0, *pFontWidth, *pFontHeight);
+
+        nFontWidth = *pFontWidth;
+        nFontHeight = *pFontHeight;
+    }
+    else // 未指定寬高，就計算實際顯示文字的寬高
+    {
+        aDevice->GetTextBoundRect(aRect, aText);
+        if (aRect.IsEmpty())
+            return nullptr;
+
+        nFontWidth = aRect.BottomRight().X() + 1;
+        nFontHeight = aRect.BottomRight().Y() + 1;
+
+        if (nFontWidth <= 0 || nFontHeight <= 0)
+            return nullptr;
+    }
+
+    unsigned char* pBuffer = static_cast<unsigned char*>(malloc(4 * nFontWidth * nFontHeight));
+    if (!pBuffer)
+        return nullptr;
+
+    memset(pBuffer, 0, nFontWidth * nFontHeight * 4);
+    aDevice->SetBackground(Wallpaper(COL_TRANSPARENT));
+    aDevice->SetOutputSizePixelScaleOffsetAndLOKBuffer(
+                Size(nFontWidth, nFontHeight), Fraction(1.0), Point(),
+                pBuffer);
+
+    if (*pFontWidth > 0 && *pFontHeight > 0)
+    {
+        DrawTextFlags const nStyle =
+                DrawTextFlags::Center
+                | DrawTextFlags::VCenter
+                | DrawTextFlags::MultiLine
+                | DrawTextFlags::WordBreak;// | DrawTextFlags::WordBreakHyphenation ;
+
+        aDevice->DrawText(aRect, aText, nStyle);
+    }
+    else
+    {
+        *pFontWidth = nFontWidth;
+        *pFontHeight = nFontHeight;
+
+        aDevice->DrawText(Point(0,0), aText);
+    }
+
+    return pBuffer;
+}
+
 
 static void doc_paintWindow(LibreOfficeKitDocument* pThis, unsigned nLOKWindowId,
                             unsigned char* pBuffer,
@@ -7377,6 +7536,7 @@ static char* lo_getVersionInfo(SAL_UNUSED_PARAMETER LibreOfficeKit* /*pThis*/)
         "\"ProductExtension\": \"%PRODUCTEXTENSION\", "
         "\"BuildId\": \"%BUILDID\", "
         "\"initUnoStatus\": true, "
+        "\"enhanceWatermark\": true, "
         "\"BuildConfig\": \""  BUILDCONFIG  "\" "
         "}"));
 }
