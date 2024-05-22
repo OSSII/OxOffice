@@ -6867,6 +6867,10 @@ unsigned char* doc_renderFontOrientationEnhance(SAL_UNUSED_PARAMETER LibreOffice
         return nullptr;
     }
 
+    // 閱覽或編輯模式不啟用
+    if (!aTree.get<bool>("editing", false))
+        return nullptr;
+
     aText = OUString::fromUtf8(aTree.get<std::string>("text", "").c_str());
 
     // 字型名稱

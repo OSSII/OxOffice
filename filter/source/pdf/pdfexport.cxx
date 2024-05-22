@@ -1419,33 +1419,38 @@ void PDFExport::ImplWriteTiledWatermarkEnhance( vcl::PDFWriter& rWriter, const S
     if (aTiledWatermarkBmp.IsEmpty())
     {
         const tools::Long nDefaultFontSize = 48; // 預設字型大小
-        OUString aText = watermark;
-        sal_uInt32 nAngle = 450; // 預設角度
-        sal_uInt8 nTransparency = 80; // 預設透明度
 
-        vcl::Font aFont;
         boost::property_tree::ptree aTree;
-        std::stringstream aStream(watermark.toUtf8().getStr());
-        boost::property_tree::read_json(aStream, aTree);
-
-        // 浮水印文字
-        aText = OUString::fromUtf8(aTree.get<std::string>("text", "").c_str());
-        // 沒有指定浮水印文字就結束
-        if (aText.isEmpty())
+        try
+        {
+            std::stringstream aStream(watermark.toUtf8().getStr());
+            boost::property_tree::read_json(aStream, aTree);
+        }
+        catch(const std::exception& e)
         {
             return;
         }
 
+        // 列印模式不啟用
+        if (!aTree.get<bool>("printing", false))
+            return;
+
+        // 浮水印文字
+        OUString aText = OUString::fromUtf8(aTree.get<std::string>("text", "").c_str());
+        // 沒有指定浮水印文字就結束
+        if (aText.isEmpty())
+            return;
+
         // 字型名稱
         OUString aFamilyName = OUString::fromUtf8(aTree.get<std::string>("familyname", "Liberation Sans").c_str());
-        aFont = vcl::Font(aFamilyName, Size(0, nDefaultFontSize));
+        vcl::Font aFont = vcl::Font(aFamilyName, Size(0, nDefaultFontSize));
 
         // 角度
-        nAngle = aTree.get<sal_uInt32>("angle", 45) * 10;
+        sal_uInt32 nAngle = aTree.get<sal_uInt32>("angle", 45) * 10;
         // 不透明度
         double nOpacity = aTree.get<double>("opacity", 0.2);
-        // 轉成透明度%
-        nTransparency = (1 - nOpacity) * 255;
+        // 轉成透明度 %
+        sal_uInt8 nTransparency = (1 - nOpacity) * 255;
         // 顏色
         aFont.SetColor(Color::STRtoRGB(OUString::fromUtf8(aTree.get<std::string>("color", "#000000").c_str())));
         // 粗體
@@ -1455,13 +1460,9 @@ void PDFExport::ImplWriteTiledWatermarkEnhance( vcl::PDFWriter& rWriter, const S
         // 是否浮雕字
         std::string aRelief = aTree.get<std::string>("relief", "");
         if (aRelief == "embossed") // 浮凸
-        {
             aFont.SetRelief(FontRelief::Embossed);
-        }
         else if (aRelief == "engraved") // 雕刻
-        {
             aFont.SetRelief(FontRelief::Engraved);
-        }
         else // 未指定浮雕字
         {
             aFont.SetOutline(aTree.get<bool>("outline", false)); // 輪廓(中空)
@@ -1484,9 +1485,7 @@ void PDFExport::ImplWriteTiledWatermarkEnhance( vcl::PDFWriter& rWriter, const S
             const tools::Long nTmpWidth = aDevice->GetTextWidth(aTmpText);
             // 找出最寬的文字
             if (nTmpWidth > nFontWidth)
-            {
                 nFontWidth = nTmpWidth;
-            }
         }
         // 重新縮放字型大小
         aFont.SetFontHeight(nDefaultFontSize * (nBmpWidth / static_cast<double>(nFontWidth) / 1.05));
@@ -1500,7 +1499,6 @@ void PDFExport::ImplWriteTiledWatermarkEnhance( vcl::PDFWriter& rWriter, const S
                         | DrawTextFlags::WordBreak);
         // 保存點陣圖資料
         aTiledWatermarkBmp = aDevice->GetBitmapEx(Point(0, 0), aBmpSize);
-        // 空的就結束
         if (!aTiledWatermarkBmp.IsEmpty())
         {
             // 轉換透明度
