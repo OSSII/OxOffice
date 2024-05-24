@@ -1428,6 +1428,7 @@ void PDFExport::ImplWriteTiledWatermarkEnhance( vcl::PDFWriter& rWriter, const S
         }
         catch(const std::exception& e)
         {
+            SAL_WARN("pdfexport", "Failed to parse JSON watermark: " << e.what());
             return;
         }
 
