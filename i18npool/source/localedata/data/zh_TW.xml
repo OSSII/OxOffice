@@ -76,6 +76,9 @@
     <FormatElement msgid="NumberFormatskey6" default="false" type="medium" usage="FIXED_NUMBER"  formatindex="5">
       <FormatCode>#,###.00</FormatCode>
     </FormatElement>
+    <FormatElement msgid="NumberFormatskey7" default="false" type="medium" usage="FIXED_NUMBER"  formatindex="1001">
+      <FormatCode>[NatNum5]0</FormatCode>
+    </FormatElement>
     <!-- Scientific Number formats. Index range is 6-7. -->
     <FormatElement msgid="ScientificFormatskey1" default="false" type="medium" usage="SCIENTIFIC_NUMBER" formatindex="6">
       <FormatCode>0.00E+000</FormatCode>
@@ -309,7 +312,7 @@
       <TransliterationModules>IGNORE_CASE</TransliterationModules>
     </CollationOptions>
   </LC_COLLATION>
-  <LC_SEARCH ref="zh_CN"/>
+  <LC_SEARCH ref="zh_TW"/>
   <LC_INDEX>
     <IndexKey unoid="stroke" default="true" phonetic="false" module="asian"/>
     <IndexKey unoid="radical" default="false" phonetic="false" module="asian"/>
@@ -321,7 +324,7 @@
   </LC_INDEX>
   <LC_CALENDAR>
     <Calendar unoid="gregorian" default="true">
-      <DaysOfWeek ref="zh_CN_gregorian"/>
+      <DaysOfWeek ref="zh_TW_gregorian"/>
       <MonthsOfYear>
         <Month>
           <MonthID>jan</MonthID>
@@ -402,7 +405,7 @@
       <MinimalDaysInFirstWeek>7</MinimalDaysInFirstWeek>
     </Calendar>
     <Calendar unoid="ROC" default="false">
-      <DaysOfWeek ref="zh_CN_gregorian"/>
+      <DaysOfWeek ref="zh_TW_gregorian"/>
       <MonthsOfYear>
         <Month>
           <MonthID>jan</MonthID>
