@@ -1289,6 +1289,12 @@ static int doc_getA11yCaretPosition(LibreOfficeKitDocument* pThis);
 
 static void doc_initUnoStatus(LibreOfficeKitDocument* pThis, const char* pCommands);
 
+static void doc_postWindowExtTextInputEventEnhance(LibreOfficeKitDocument* pThis,
+                                                   unsigned nWindowId,
+                                                   int nType,
+                                                   const char* pText,
+                                                   int nCursorPos);
+
 } // extern "C"
 
 namespace {
@@ -1484,6 +1490,7 @@ LibLODocument_Impl::LibLODocument_Impl(uno::Reference <css::lang::XComponent> xC
         m_pDocumentClass->getA11yCaretPosition = doc_getA11yCaretPosition;
 
         m_pDocumentClass->initUnoStatus = doc_initUnoStatus;
+        m_pDocumentClass->postWindowExtTextInputEventEnhance = doc_postWindowExtTextInputEventEnhance;
 
         gDocumentClass = m_pDocumentClass;
     }
@@ -4781,6 +4788,36 @@ static void doc_postWindowExtTextInputEvent(LibreOfficeKitDocument* pThis, unsig
     SfxLokHelper::postExtTextEventAsync(pWindow, nType, OUString::fromUtf8(std::string_view(pText, strlen(pText))));
 }
 
+static void doc_postWindowExtTextInputEventEnhance(LibreOfficeKitDocument* pThis, unsigned nWindowId, int nType, const char* pText, int cursorPos)
+{
+    comphelper::ProfileZone aZone("doc_postWindowExtTextInputEventEnhance");
+
+    SolarMutexGuard aGuard;
+    VclPtr<vcl::Window> pWindow;
+    if (nWindowId == 0)
+    {
+        ITiledRenderable* pDoc = getTiledRenderable(pThis);
+        if (!pDoc)
+        {
+            SetLastExceptionMsg("Document doesn't support tiled rendering");
+            return;
+        }
+        pWindow = pDoc->getDocWindow();
+    }
+    else
+    {
+        pWindow = vcl::Window::FindLOKWindow(nWindowId);
+    }
+
+    if (!pWindow)
+    {
+        SetLastExceptionMsg("No window found for window id: " + OUString::number(nWindowId));
+        return;
+    }
+
+    SfxLokHelper::postExtTextEventAsync(pWindow, nType, OUString::fromUtf8(std::string_view(pText, strlen(pText))), cursorPos);
+}
+
 static char* doc_hyperlinkInfoAtPosition(LibreOfficeKitDocument* pThis, int x, int y)
 {
     SolarMutexGuard aGuard;
@@ -7544,6 +7581,7 @@ static char* lo_getVersionInfo(SAL_UNUSED_PARAMETER LibreOfficeKit* /*pThis*/)
         "\"BuildId\": \"%BUILDID\", "
         "\"initUnoStatus\": true, "
         "\"enhanceWatermark\": true, "
+        "\"postWindowExtTextInputEventEnhance\": true, "
         "\"BuildConfig\": \""  BUILDCONFIG  "\" "
         "}"));
 }

@@ -2088,7 +2088,7 @@ void Window::SetInputContext( const InputContext& rInputContext )
         ImplNewInputContext();
 }
 
-void Window::PostExtTextInputEvent(VclEventId nType, const OUString& rText)
+void Window::PostExtTextInputEvent(VclEventId nType, const OUString& rText, sal_Int32 nCursorPos)
 {
     switch (nType)
     {
@@ -2096,9 +2096,16 @@ void Window::PostExtTextInputEvent(VclEventId nType, const OUString& rText)
     {
         std::unique_ptr<ExtTextInputAttr[]> pAttr(new ExtTextInputAttr[rText.getLength()]);
         for (int i = 0; i < rText.getLength(); ++i) {
-            pAttr[i] = ExtTextInputAttr::Underline;
+            pAttr[i] = i == nCursorPos ? ExtTextInputAttr::BoldUnderline : ExtTextInputAttr::DottedUnderline;
+
         }
-        SalExtTextInputEvent aEvent { rText, pAttr.get(), rText.getLength(), EXTTEXTINPUT_CURSOR_OVERWRITE };
+        //SalExtTextInputEvent aEvent { rText, pAttr.get(), rText.getLength(), EXTTEXTINPUT_CURSOR_OVERWRITE };
+        SalExtTextInputEvent aEvent;
+        aEvent.maText = rText;
+        aEvent.mpTextAttr = pAttr.get();
+        aEvent.mnCursorPos = nCursorPos < 0 ? rText.getLength() : nCursorPos;
+        aEvent.mnCursorFlags = nCursorPos < 0 || nCursorPos >= rText.getLength() ?
+            EXTTEXTINPUT_CURSOR_OVERWRITE : EXTTEXTINPUT_CURSOR_INVISIBLE;
         ImplWindowFrameProc(this, SalEvent::ExtTextInput, &aEvent);
     }
     break;

@@ -209,7 +209,8 @@ public:
 
     /// Helper for posting input event
     static void postExtTextEventAsync(const VclPtr<vcl::Window> &xWindow,
-                                      int nType, const OUString &rText);
+                                      int nType, const OUString &rText,
+                                      sal_Int32 nCursorPos = -1);
 
     /// Helper for posting async mouse event
     static void postMouseEventAsync(const VclPtr<vcl::Window> &xWindow, LokMouseEventData const & rLokMouseEventData);
