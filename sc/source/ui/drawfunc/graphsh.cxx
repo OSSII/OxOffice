@@ -34,11 +34,6 @@
 #include <gridwin.hxx>
 #include <scresid.hxx>
 #include <svx/extedit.hxx>
-#include <sfx2/request.hxx>
-#include <svl/stritem.hxx>
-#include <vcl/graphicfilter.hxx>
-#include <tools/urlobj.hxx>
-#include <comphelper/lok.hxx>
 
 #define ShellClass_ScGraphicShell
 #include <scslots.hxx>
@@ -266,7 +261,7 @@ void ScGraphicShell::ExecuteCropGraphic( SAL_UNUSED_PARAMETER SfxRequest& )
     Invalidate();
 }
 
-void ScGraphicShell::ExecuteSaveGraphic( SfxRequest& rReq)
+void ScGraphicShell::ExecuteSaveGraphic( SAL_UNUSED_PARAMETER SfxRequest& /*rReq*/)
 {
     ScDrawView* pView = GetViewData().GetScDrawView();
     const SdrMarkList& rMarkList = pView->GetMarkedObjectList();
@@ -298,18 +293,7 @@ void ScGraphicShell::ExecuteSaveGraphic( SfxRequest& rReq)
             else if (nState == RET_NO)
             {
                 const GraphicObject& aGraphicObject(pObj->GetGraphicObject());
-                if (comphelper::LibreOfficeKit::isActive()) {
-                    OUString sGrfNm;
-                    const SfxStringItem* oName = rReq.GetArg<SfxStringItem>(SID_OX_SAVE_GRAPHIC);
-                    if (oName) {
-                        sGrfNm = oName->GetValue();
-                        GraphicHelper::ExportGraphic(pWinFrame, aGraphicObject.GetGraphic(), sGrfNm);
-                    }
-                }
-                else
-                {
-                    GraphicHelper::ExportGraphic(pWinFrame, aGraphicObject.GetGraphic(), "");
-                }
+                GraphicHelper::ExportGraphic(pWinFrame, aGraphicObject.GetGraphic(), "");
             }
         }
     }
@@ -338,7 +322,7 @@ void ScGraphicShell::GetSaveGraphicState(SfxItemSet &rSet)
         rSet.DisableItem( SID_SAVE_GRAPHIC );
 }
 
-void ScGraphicShell::ExecuteChangePicture( SfxRequest& rReq)
+void ScGraphicShell::ExecuteChangePicture( SAL_UNUSED_PARAMETER SfxRequest& /*rReq*/)
 {
     ScDrawView* pView = GetViewData().GetScDrawView();
     const SdrMarkList& rMarkList = pView->GetMarkedObjectList();
@@ -353,34 +337,11 @@ void ScGraphicShell::ExecuteChangePicture( SfxRequest& rReq)
                 vcl::Window* pWin = GetViewData().GetActiveWin();
                 SvxOpenGraphicDialog aDlg(ScResId(STR_INSERTGRAPHIC), pWin ? pWin->GetFrameWeld() : nullptr);
 
-                bool run = false;
-                if (comphelper::LibreOfficeKit::isActive())
-                    run = true;
-                else
-                    run = aDlg.Execute() == ERRCODE_NONE? true: false;
-
-                if( run )
+                if( aDlg.Execute() == ERRCODE_NONE )
                 {
                     Graphic aGraphic;
-
-                    ErrCode nError;
-                    if (comphelper::LibreOfficeKit::isActive()) {
-                        const SfxStringItem* aFullName = rReq.GetArg<SfxStringItem>(SID_OX_CHANGE_PICTURE);
-                        if (aFullName) {
-                            INetURLObject aURL;
-                            aURL.SetSmartURL( aFullName->GetValue() );
-                            OUString aFilterName = aURL.getExtension();
-                            nError = GraphicFilter::LoadGraphic( aFullName->GetValue(), aFilterName, aGraphic, &GraphicFilter::GetGraphicFilter() );
-                        }
-                    }
-                    else
-                    {
-                        nError = aDlg.GetGraphic(aGraphic);
-                    }
-
-                    /* Franklin.20231219: 1. nError may be uninitialized here!
-                     * 2. "run" here is nonsense since if it's false it won't go into here */
-                    if( nError == ERRCODE_NONE /* || run */)
+                    ErrCode nError = aDlg.GetGraphic(aGraphic);
+                    if( nError == ERRCODE_NONE )
                     {
                         rtl::Reference<SdrGrafObj> pNewObject(SdrObject::Clone(*pGraphicObj, pGraphicObj->getSdrModelFromSdrObject()));
                         pNewObject->SetGraphic( aGraphic );

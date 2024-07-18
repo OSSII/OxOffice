@@ -82,7 +82,6 @@
 #include <vcl/GraphicNativeMetadata.hxx>
 
 #include <comphelper/lok.hxx>
-#include <tools/urlobj.hxx>
 
 using namespace com::sun::star;
 
@@ -112,7 +111,6 @@ rtl::Reference<FuPoor> FuInsertGraphic::Create( ViewShell* pViewSh, ::sd::Window
 void FuInsertGraphic::DoExecute( SfxRequest& rReq )
 {
     OUString aFileName;
-    OUString aFilterName;
     Graphic aGraphic;
 
     bool bAsLink = false;
@@ -126,6 +124,7 @@ void FuInsertGraphic::DoExecute( SfxRequest& rReq )
     {
         aFileName = static_cast<const SfxStringItem*>(pItem)->GetValue();
 
+        OUString aFilterName;
         if ( const SfxStringItem* pFilterItem = pArgs->GetItemIfSet( FN_PARAM_FILTER ) )
             aFilterName = pFilterItem->GetValue();
 
@@ -139,15 +138,6 @@ void FuInsertGraphic::DoExecute( SfxRequest& rReq )
                 SfxLokHelper::sendNetworkAccessError("insert");
         }
 
-        nError = GraphicFilter::LoadGraphic( aFileName, aFilterName, aGraphic, &GraphicFilter::GetGraphicFilter() );
-    }
-    else if ( comphelper::LibreOfficeKit::isActive() && pArgs &&
-         pArgs->GetItemState( SID_OX_CHANGE_PICTURE, true, &pItem ) == SfxItemState::SET )
-    {
-        aFileName = static_cast<const SfxStringItem*>(pItem)->GetValue();
-        INetURLObject aURL;
-        aURL.SetSmartURL( aFileName );
-        aFilterName = aURL.getExtension();
         nError = GraphicFilter::LoadGraphic( aFileName, aFilterName, aGraphic, &GraphicFilter::GetGraphicFilter() );
     }
     else

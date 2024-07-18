@@ -2908,16 +2908,6 @@ interface DrawView
         ExecMethod = FuTemporary ;
         StateMethod = GetMenuState ;
     ]
-    SID_OX_CHANGE_PICTURE
-    [
-        ExecMethod = FuTemporary ;
-        StateMethod = GetMenuState ;
-    ]
-    SID_OX_SAVE_GRAPHIC
-    [
-        ExecMethod = FuTemporary ;
-        StateMethod = GetMenuState ;
-    ]
     SID_ATTR_GLOW_COLOR
     [
         ExecMethod = FuTemporary ;

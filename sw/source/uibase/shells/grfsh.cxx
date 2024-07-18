@@ -65,7 +65,6 @@
 #include <unocrsr.hxx>
 #include <flyfrm.hxx>
 #include <memory>
-#include <comphelper/lok.hxx>
 
 constexpr OUStringLiteral TOOLBOX_NAME = u"colorbar";
 
@@ -139,7 +138,6 @@ void SwGrfShell::Execute(SfxRequest &rReq)
             break;
         }
 
-        case SID_OX_SAVE_GRAPHIC:
         case SID_SAVE_GRAPHIC:
         {
             GraphicAttr aGraphicAttr;
@@ -179,15 +177,6 @@ void SwGrfShell::Execute(SfxRequest &rReq)
                     OUString sGrfNm;
                     OUString sFilterNm;
                     rSh.GetGrfNms( &sGrfNm, &sFilterNm );
-                    if (comphelper::LibreOfficeKit::isActive())
-                    {
-                        const SfxStringItem* oName = rReq.GetArg<SfxStringItem>(SID_OX_SAVE_GRAPHIC);
-                        if (oName) {
-                            sGrfNm = oName->GetValue();
-                        } else {
-                            break;
-                        }
-                    }
                     GraphicHelper::ExportGraphic(GetView().GetFrameWeld(), *pGraphic, sGrfNm);
                 }
             }
@@ -253,7 +242,6 @@ void SwGrfShell::Execute(SfxRequest &rReq)
             }
         }
         break;
-        case SID_OX_CHANGE_PICTURE:
         case SID_CHANGE_PICTURE:
         case SID_INSERT_GRAPHIC:
         {

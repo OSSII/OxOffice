@@ -1059,9 +1059,6 @@ class XFillGradientItem;
 // IMPORTANT NOTE: adjust SID_SVX_FIRSTFREE, when adding new slot id
 #define SID_SVX_FIRSTFREE                               ( SID_SVX_START + 1211 + 1 )
 
-// new slots for oxool, leave spaces for upstream changes
-#define SID_OX_CHANGE_PICTURE                              ( SID_SVX_START + 1300 )
-#define SID_OX_SAVE_GRAPHIC                                ( SID_SVX_START + 1301 )
 
 // Overflow check for slot IDs
 #if SID_SVX_FIRSTFREE > SID_SVX_END

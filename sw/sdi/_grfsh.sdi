@@ -267,16 +267,5 @@ interface BaseTextGraphic
                 StateMethod = GetAttrState ;
                 DisableFlags="SfxDisableFlags::SwOnProtectedCursor";
         ]
-    SID_OX_SAVE_GRAPHIC
-    [
-        ExecMethod = Execute ;
-        StateMethod = GetAttrState ;
-        DisableFlags="SfxDisableFlags::SwOnProtectedCursor";
-    ]
-    SID_OX_CHANGE_PICTURE
-    [
-        ExecMethod = Execute ;
-        StateMethod = GetAttrState ;
-        DisableFlags="SfxDisableFlags::SwOnProtectedCursor";
-    ]
+
 }

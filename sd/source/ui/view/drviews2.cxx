@@ -1383,7 +1383,6 @@ void DrawViewShell::FuTemporary(SfxRequest& rReq)
         }
         break;
 
-        case SID_OX_SAVE_GRAPHIC:
         case SID_SAVE_GRAPHIC:
         {
             const SdrMarkList& rMarkList = mpDrawView->GetMarkedObjectList();
@@ -1414,22 +1413,7 @@ void DrawViewShell::FuTemporary(SfxRequest& rReq)
                     else if (nState == RET_NO)
                     {
                         const GraphicObject& aGraphicObject(pObj->GetGraphicObject());
-                        if (comphelper::LibreOfficeKit::isActive()) {
-                            OUString sGrfNm;
-                            const SfxStringItem* oName = rReq.GetArg<SfxStringItem>(SID_OX_SAVE_GRAPHIC);
-                            if (oName) {
-                                sGrfNm = oName->GetValue();
-                                GraphicHelper::ExportGraphic(pFrame, aGraphicObject.GetGraphic(), sGrfNm);
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            GraphicHelper::ExportGraphic(pFrame, aGraphicObject.GetGraphic(), "");
-                        }
+                        GraphicHelper::ExportGraphic(pFrame, aGraphicObject.GetGraphic(), "");
                     }
                 }
             }
@@ -1616,19 +1600,11 @@ void DrawViewShell::FuTemporary(SfxRequest& rReq)
         }
         break;
 
-        case SID_OX_CHANGE_PICTURE:
         case SID_CHANGE_PICTURE:
         case SID_INSERT_GRAPHIC:
         {
-            if (comphelper::LibreOfficeKit::isActive()) {
-                SetCurrentFunction( FuInsertGraphic::Create( this, GetActiveWindow(), mpDrawView.get(), GetDoc(), rReq,
-                                                         nSId == SID_OX_CHANGE_PICTURE ) );
-            }
-            else
-            {
-                SetCurrentFunction( FuInsertGraphic::Create( this, GetActiveWindow(), mpDrawView.get(), GetDoc(), rReq,
+            SetCurrentFunction( FuInsertGraphic::Create( this, GetActiveWindow(), mpDrawView.get(), GetDoc(), rReq,
                                                          nSId == SID_CHANGE_PICTURE ) );
-            }
             Cancel();
             rReq.Ignore ();
         }
@@ -3360,9 +3336,7 @@ void DrawViewShell::FuTemporary(SfxRequest& rReq)
 
                 Cancel();
                 rReq.Done();
-            }
-            else
-            {
+            } else {
                 if ( rReq.GetArgs() )
                     GetViewFrame()->SetChildWindow(SID_NAVIGATOR,
                                             static_cast<const SfxBoolItem&>(rReq.GetArgs()->
