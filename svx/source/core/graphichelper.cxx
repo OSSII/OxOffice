@@ -20,14 +20,11 @@
 #include <vcl/graphicfilter.hxx>
 #include <sfx2/docfile.hxx>
 #include <sfx2/filedlghelper.hxx>
-#include <sfx2/viewsh.hxx>
 #include <svx/xoutbmp.hxx>
 #include <svx/dialmgr.hxx>
 #include <svx/graphichelper.hxx>
 #include <svx/strings.hrc>
 #include <comphelper/diagnose_ex.hxx>
-#include <comphelper/lok.hxx>
-#include <LibreOfficeKit/LibreOfficeKitEnums.h>
 #include <vcl/svapp.hxx>
 #include <vcl/weld.hxx>
 
@@ -229,55 +226,6 @@ bool lcl_ExecuteFilterDialog( const Sequence< PropertyValue >& rPropsForDialog,
 
 OUString GraphicHelper::ExportGraphic(weld::Window* pParent, const Graphic& rGraphic, const OUString& rGraphicName)
 {
-    // If we are running in LOK mode, we need to export the graphic to a file in the temp directory
-    if (comphelper::LibreOfficeKit::isActive())
-    {
-        SfxViewShell* pShell = SfxViewShell::Current();
-        if (!pShell)
-        {
-            SAL_WARN("svx", "GraphicHelper::ExportGraphic: no view shell");
-            return OUString();
-        }
-
-        // get the Preferred File Extension for this graphic
-        OUString aExtension;
-        GraphicHelper::GetPreferredExtension(aExtension, rGraphic);
-
-        // Create the temp File
-        OUString aTempFileBase;
-        osl::FileBase::RC rc = osl::FileBase::createTempFile(nullptr, nullptr, &aTempFileBase);
-        if (rc != osl::FileBase::E_None)
-        {
-            SAL_WARN("svx", "GraphicHelper::ExportGraphic: cannot create temp file");
-            return OUString();
-        }
-
-        // Move it to a file name with image extension properly set
-        OUString aTempFileName = aTempFileBase + "." + aExtension;
-        rc = osl::File::move(aTempFileBase, aTempFileName);
-        if (rc != osl::FileBase::E_None)
-        {
-            SAL_WARN("svx", "GraphicHelper::ExportGraphic: cannot move temp file");
-            return OUString();
-        }
-
-        // Write Graphic to the Temp File
-        GraphicFilter& rGraphicFilter = GraphicFilter::GetGraphicFilter();
-        sal_uInt16 nFilter(rGraphicFilter.GetExportFormatNumberForShortName(aExtension));
-        OUString aFilter(rGraphicFilter.GetExportFormatShortName(nFilter));
-
-        // Write the Graphic to the file now
-        XOutBitmap::WriteGraphic(rGraphic, aTempFileName, aFilter,
-                                    XOutFlags::UseNativeIfPossible |
-                                    XOutFlags::DontExpandFilename);
-
-        // Notify the LOK client that we have exported a file
-        pShell->libreOfficeKitViewCallback(LOK_CALLBACK_EXPORT_FILE,
-                OUStringToOString(aTempFileName, RTL_TEXTENCODING_UTF8).getStr());
-
-        return aTempFileName;
-    }
-
     FileDialogHelper aDialogHelper(TemplateDescription::FILESAVE_AUTOEXTENSION, FileDialogFlags::NONE, pParent);
     Reference < XFilePicker3 > xFilePicker = aDialogHelper.GetFilePicker();
 
@@ -480,43 +428,6 @@ void GraphicHelper::SaveShapeAsGraphic(weld::Window* pParent,
                                        const css::uno::Reference<css::lang::XComponent>& xComponent,
                                        const Reference<drawing::XShape>& xShape)
 {
-    if (comphelper::LibreOfficeKit::isActive())
-    {
-        SfxViewShell* pShell = SfxViewShell::Current();
-        if (!pShell)
-        {
-            SAL_WARN("svx", "GraphicHelper::SaveShapeAsGraphic: no view shell");
-            return;
-        }
-
-        // Create the temp File
-        OUString aTempFileBase;
-        osl::FileBase::RC rc = osl::FileBase::createTempFile(nullptr, nullptr, &aTempFileBase);
-        if (rc != osl::FileBase::E_None)
-        {
-            SAL_WARN("svx", "GraphicHelper::SaveShapeAsGraphic: cannot create temp file");
-            return;
-        }
-
-        // We prefer SVG for LOK, they are smaller and more efficient
-        const OUString aExportMimeType = "image/svg+xml";
-        const OUString aTempFileName = aTempFileBase + ".svg";
-        rc = osl::File::move(aTempFileBase, aTempFileName);
-        if (rc != osl::FileBase::E_None)
-        {
-            SAL_WARN("svx", "GraphicHelper::SaveShapeAsGraphic: cannot move temp file");
-            return;
-        }
-
-        // Write the Graphic to the file now
-        GraphicHelper::SaveShapeAsGraphicToPath(xComponent, xShape, aExportMimeType, aTempFileName);
-        // Notify the LOK client that we have exported a file
-        pShell->libreOfficeKitViewCallback(LOK_CALLBACK_EXPORT_FILE,
-                OUStringToOString(aTempFileName, RTL_TEXTENCODING_UTF8).getStr());
-
-        return;
-    }
-
     try
     {
         Reference< XPropertySet > xShapeSet( xShape, UNO_QUERY_THROW );
@@ -565,9 +476,6 @@ void GraphicHelper::SaveShapeAsGraphic(weld::Window* pParent,
 
 short GraphicHelper::HasToSaveTransformedImage(weld::Widget* pWin)
 {
-    if (comphelper::LibreOfficeKit::isActive())
-        return RET_YES;
-
     OUString aMsg(SvxResId(RID_SVXSTR_SAVE_MODIFIED_IMAGE));
     std::unique_ptr<weld::MessageDialog> xBox(Application::CreateMessageDialog(pWin,
                                               VclMessageType::Question, VclButtonsType::YesNo, aMsg));
