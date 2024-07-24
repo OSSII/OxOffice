@@ -25,6 +25,11 @@
 #include <svx/graphichelper.hxx>
 #include <svx/strings.hrc>
 #include <comphelper/diagnose_ex.hxx>
+#include <sfx2/viewsh.hxx>
+#include <tools/json_writer.hxx>
+#include <comphelper/base64.hxx>
+#include <comphelper/lok.hxx>
+#include <LibreOfficeKit/LibreOfficeKitEnums.h>
 #include <vcl/svapp.hxx>
 #include <vcl/weld.hxx>
 
@@ -222,10 +227,53 @@ bool lcl_ExecuteFilterDialog( const Sequence< PropertyValue >& rPropsForDialog,
 
     return bStatus;
 }
+
+OUString lcl_ExportGraphicToTempFile(const Graphic& rGraphic)
+{
+    // Get system temp directory
+    OUString aTempDirURL;
+    osl::File::getTempDirURL(aTempDirURL);
+    // get the Preferred File Extension for this graphic
+    OUString aExtension;
+    GraphicHelper::GetPreferredExtension(aExtension, rGraphic);
+    // get the Unique ID for this graphic
+    OUString aUniqueID = OStringToOUString(rGraphic.getUniqueID(), RTL_TEXTENCODING_UTF8);
+    OUString aTempFileURL = aTempDirURL + "/" + aUniqueID + "." + aExtension;
+
+    // Write Graphic to the Temp File
+    GraphicFilter& rGraphicFilter = GraphicFilter::GetGraphicFilter();
+    sal_uInt16 nFilter(rGraphicFilter.GetExportFormatNumberForShortName(aExtension));
+    OUString aFilter(rGraphicFilter.GetExportFormatShortName(nFilter));
+    // Write the Graphic to the file now
+    ErrCode nErr = XOutBitmap::WriteGraphic(rGraphic, aTempFileURL, aFilter,
+                                            XOutFlags::UseNativeIfPossible |
+                                            XOutFlags::DontExpandFilename);
+
+    return nErr == ERRCODE_NONE ? aTempFileURL : OUString();
+}
 } // anonymous ns
 
 OUString GraphicHelper::ExportGraphic(weld::Window* pParent, const Graphic& rGraphic, const OUString& rGraphicName)
 {
+    // If we are running in LOK mode, we need to export the graphic to a file in the temp directory
+    if (comphelper::LibreOfficeKit::isActive() && SfxViewShell::Current())
+    {
+        OUString aTempFileName = lcl_ExportGraphicToTempFile(rGraphic);
+        if (!aTempFileName.isEmpty())
+        {
+            // Notify the LOK client that we have exported a file
+            SfxViewShell::Current()->libreOfficeKitViewCallback(LOK_CALLBACK_EXPORT_FILE,
+                    OUStringToOString(aTempFileName, RTL_TEXTENCODING_UTF8).getStr());
+        }
+        else
+        {
+            SAL_WARN("svx", "GraphicHelper::ExportGraphic: cannot create temp file");
+            return OUString();
+        }
+
+        return aTempFileName;
+    }
+
     FileDialogHelper aDialogHelper(TemplateDescription::FILESAVE_AUTOEXTENSION, FileDialogFlags::NONE, pParent);
     Reference < XFilePicker3 > xFilePicker = aDialogHelper.GetFilePicker();
 
@@ -373,6 +421,53 @@ OUString GraphicHelper::ExportGraphic(weld::Window* pParent, const Graphic& rGra
     return OUString();
 }
 
+void GraphicHelper::LOKitGetGraphic(const Graphic& rGraphic)
+{
+    if (comphelper::LibreOfficeKit::isActive() && SfxViewShell::Current())
+    {
+        OUString aTempFileName = lcl_ExportGraphicToTempFile(rGraphic);
+
+        tools::JsonWriter aJson;
+        aJson.put("commandName", ".uno:ExternalEdit");
+        if (!aTempFileName.isEmpty())
+        {
+            osl::File aFile(aTempFileName);
+            if (aFile.open(osl_File_OpenFlag_Read) == osl::FileBase::E_None)
+            {
+                aJson.put("success", true);
+                auto result = aJson.startNode("result");
+
+                sal_uInt64 nSize = 0;
+                aFile.getSize(nSize);
+                css::uno::Sequence<sal_Int8> aSeq(nSize);
+                sal_uInt64 nRead = 0;
+                aFile.read(aSeq.getArray(), nSize, nRead);
+                aFile.close();
+                OStringBuffer aBase64Data;
+                comphelper::Base64::encode(aBase64Data, aSeq);
+                OUString aExtension;
+                GraphicHelper::GetPreferredExtension(aExtension, rGraphic);
+                aJson.put("type", aExtension);
+                aJson.put("data", aBase64Data.makeStringAndClear());
+            }
+            else
+            {
+                aJson.put("success", false);
+                aJson.put("result", "Failed to read graphic from temp file");
+            }
+            // Remove the temp file
+            osl::File::remove(aTempFileName);
+        }
+        else
+        {
+            aJson.put("success", false);
+            aJson.put("result", "Failed to save graphic to temp file");
+        }
+        SfxViewShell::Current()->libreOfficeKitViewCallback(
+            LOK_CALLBACK_UNO_COMMAND_RESULT, aJson.extractData());
+    }
+}
+
 void GraphicHelper::SaveShapeAsGraphicToPath(
     const css::uno::Reference<css::lang::XComponent>& xComponent,
     const css::uno::Reference<css::drawing::XShape>& xShape, const OUString& aExportMimeType,
@@ -428,6 +523,36 @@ void GraphicHelper::SaveShapeAsGraphic(weld::Window* pParent,
                                        const css::uno::Reference<css::lang::XComponent>& xComponent,
                                        const Reference<drawing::XShape>& xShape)
 {
+    if (comphelper::LibreOfficeKit::isActive() && SfxViewShell::Current())
+    {
+        // Create the temp File
+        OUString aTempFileBase;
+        osl::FileBase::RC rc = osl::FileBase::createTempFile(nullptr, nullptr, &aTempFileBase);
+        if (rc != osl::FileBase::E_None)
+        {
+            SAL_WARN("svx", "GraphicHelper::SaveShapeAsGraphic: cannot create temp file");
+            return;
+        }
+
+        // We prefer SVG for LOK, they are smaller and more efficient
+        const OUString aExportMimeType = "image/svg+xml";
+        const OUString aTempFileName = aTempFileBase + ".svg";
+        rc = osl::File::move(aTempFileBase, aTempFileName);
+        if (rc != osl::FileBase::E_None)
+        {
+            SAL_WARN("svx", "GraphicHelper::SaveShapeAsGraphic: cannot move temp file");
+            return;
+        }
+
+        // Write the Graphic to the file now
+        GraphicHelper::SaveShapeAsGraphicToPath(xComponent, xShape, aExportMimeType, aTempFileName);
+        // Notify the LOK client that we have exported a file
+        SfxViewShell::Current()->libreOfficeKitViewCallback(LOK_CALLBACK_EXPORT_FILE,
+                OUStringToOString(aTempFileName, RTL_TEXTENCODING_UTF8).getStr());
+
+        return;
+    }
+
     try
     {
         Reference< XPropertySet > xShapeSet( xShape, UNO_QUERY_THROW );
@@ -476,6 +601,9 @@ void GraphicHelper::SaveShapeAsGraphic(weld::Window* pParent,
 
 short GraphicHelper::HasToSaveTransformedImage(weld::Widget* pWin)
 {
+    if (comphelper::LibreOfficeKit::isActive())
+        return RET_YES;
+
     OUString aMsg(SvxResId(RID_SVXSTR_SAVE_MODIFIED_IMAGE));
     std::unique_ptr<weld::MessageDialog> xBox(Application::CreateMessageDialog(pWin,
                                               VclMessageType::Question, VclButtonsType::YesNo, aMsg));

@@ -1432,10 +1432,17 @@ void DrawViewShell::FuTemporary(SfxRequest& rReq)
                     if( pGraphicObj->GetGraphicType() == GraphicType::Bitmap )
                     {
                         GraphicObject aGraphicObject( pGraphicObj->GetGraphicObject() );
-                        m_ExternalEdits.push_back(
-                            std::make_unique<SdrExternalToolEdit>(
-                                mpDrawView.get(), pGraphicObj));
-                        m_ExternalEdits.back()->Edit( &aGraphicObject );
+                        if (comphelper::LibreOfficeKit::isActive())
+                        {
+                            GraphicHelper::LOKitGetGraphic(aGraphicObject.GetGraphic());
+                        }
+                        else
+                        {
+                            m_ExternalEdits.push_back(
+                                std::make_unique<SdrExternalToolEdit>(
+                                    mpDrawView.get(), pGraphicObj));
+                            m_ExternalEdits.back()->Edit( &aGraphicObject );
+                        }
                     }
             }
             Cancel();

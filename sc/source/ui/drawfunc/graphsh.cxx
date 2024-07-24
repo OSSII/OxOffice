@@ -168,9 +168,16 @@ void ScGraphicShell::ExecuteExternalEdit( SAL_UNUSED_PARAMETER SfxRequest& )
             if( pGraphicObj->GetGraphicType() == GraphicType::Bitmap )
             {
                 GraphicObject aGraphicObject( pGraphicObj->GetGraphicObject() );
-                m_ExternalEdits.push_back( std::make_unique<SdrExternalToolEdit>(
+                if (comphelper::LibreOfficeKit::isActive())
+                {
+                    GraphicHelper::LOKitGetGraphic(aGraphicObject.GetGraphic());
+                }
+                else
+                {
+                    m_ExternalEdits.push_back( std::make_unique<SdrExternalToolEdit>(
                             pView, pGraphicObj));
-                m_ExternalEdits.back()->Edit( &aGraphicObject );
+                    m_ExternalEdits.back()->Edit( &aGraphicObject );
+                }
             }
     }
 
