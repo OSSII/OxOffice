@@ -54,6 +54,7 @@
 #include <swwait.hxx>
 #include <svx/extedit.hxx>
 #include <svx/graphichelper.hxx>
+#include <comphelper/lok.hxx>
 #include <doc.hxx>
 #include <IDocumentDrawModelAccess.hxx>
 #include <svx/drawitem.hxx>
@@ -236,9 +237,16 @@ void SwGrfShell::Execute(SfxRequest &rReq)
             GraphicObject const*const pGraphicObject(rSh.GetGraphicObj());
             if(nullptr != pGraphicObject)
             {
-                m_ExternalEdits.push_back(std::make_unique<SwExternalToolEdit>(
-                            &rSh));
-                m_ExternalEdits.back()->Edit(pGraphicObject);
+                if (comphelper::LibreOfficeKit::isActive())
+                {
+                    GraphicHelper::LOKitGetGraphic(pGraphicObject->GetGraphic());
+                }
+                else
+                {
+                    m_ExternalEdits.push_back(std::make_unique<SwExternalToolEdit>(
+                                &rSh));
+                    m_ExternalEdits.back()->Edit(pGraphicObject);
+                }
             }
         }
         break;
