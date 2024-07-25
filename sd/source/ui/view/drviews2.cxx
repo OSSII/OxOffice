@@ -1578,7 +1578,7 @@ void DrawViewShell::FuTemporary(SfxRequest& rReq)
         case SID_INSERT_GRAPHIC:
         {
             SetCurrentFunction( FuInsertGraphic::Create( this, GetActiveWindow(), mpDrawView.get(), GetDoc(), rReq,
-                                                         nSId == SID_CHANGE_PICTURE ) );
+                                                         nSId == SID_CHANGE_PICTURE || comphelper::LibreOfficeKit::isActive()) );
             Cancel();
             rReq.Ignore ();
         }
