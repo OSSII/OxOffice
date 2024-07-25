@@ -294,7 +294,30 @@ FuInsertGraphic::FuInsertGraphic( ScTabViewShell&   rViewSh,
         ErrCode nError = GraphicFilter::LoadGraphic( aFileName, aFilterName, aGraphic, &GraphicFilter::GetGraphicFilter() );
         if ( nError == ERRCODE_NONE )
         {
-            lcl_InsertGraphic( aGraphic, aFileName, bAsLink, true, rViewSh, pWindow, pView );
+            bool replacedPicture = false;
+            if (comphelper::LibreOfficeKit::isActive())
+            {
+                const SdrMarkList& rMarkList = pView->GetMarkedObjectList();
+                if (rMarkList.GetMarkCount() == 1)
+                {
+                    SdrObject* pObj = rMarkList.GetMark( 0 )->GetMarkedSdrObj();
+                    auto pGraphicObj = dynamic_cast<SdrGrafObj*>( pObj);
+                    if ( pGraphicObj->GetGraphicType() == GraphicType::Bitmap )
+                    {
+                        rtl::Reference<SdrGrafObj> pNewObject(SdrObject::Clone(*pGraphicObj, pGraphicObj->getSdrModelFromSdrObject()));
+                        pNewObject->SetGraphic( aGraphic );
+                        SdrPageView* pPageView = pView->GetSdrPageView();
+                        OUString aUndoString = pView->GetDescriptionOfMarkedObjects() + " Change";
+                        pView->BegUndo( aUndoString );
+                        pView->ReplaceObjectAtView( pObj, *pPageView, pNewObject.get() );
+                        pView->EndUndo();
+                        replacedPicture = true;
+                    }
+                }
+            }
+
+            if (!replacedPicture)
+                lcl_InsertGraphic( aGraphic, aFileName, bAsLink, true, rViewSh, pWindow, pView );
         }
     }
     else
