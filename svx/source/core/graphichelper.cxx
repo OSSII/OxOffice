@@ -26,6 +26,7 @@
 #include <svx/strings.hrc>
 #include <comphelper/diagnose_ex.hxx>
 #include <sfx2/viewsh.hxx>
+#include <osl/file.hxx>
 #include <tools/json_writer.hxx>
 #include <comphelper/base64.hxx>
 #include <comphelper/lok.hxx>
