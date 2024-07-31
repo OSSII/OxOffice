@@ -1,4 +1,4 @@
-/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+﻿/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 /*
  * This file is part of the LibreOffice project.
  *
@@ -44,7 +44,7 @@
 #include <map>
 #include <memory>
 
-GenericSalLayout::GenericSalLayout(LogicalFontInstance &rFont)
+GenericSalLayout::GenericSalLayout(LogicalFontInstance& rFont)
     : m_GlyphItems(rFont)
     , mpVertGlyphs(nullptr)
     , mbFuzzing(utl::ConfigManager::IsFuzzing())
@@ -64,14 +64,15 @@ void GenericSalLayout::ParseFeatures(std::u16string_view aName)
     if (!sLanguage.isEmpty())
         msLanguage = OUStringToOString(sLanguage, RTL_TEXTENCODING_ASCII_US);
 
-    for (auto const &rFeat : aParser.getFeatures())
+    for (auto const& rFeat : aParser.getFeatures())
     {
-        hb_feature_t aFeature { rFeat.m_nTag, rFeat.m_nValue, rFeat.m_nStart, rFeat.m_nEnd };
+        hb_feature_t aFeature{ rFeat.m_nTag, rFeat.m_nValue, rFeat.m_nStart, rFeat.m_nEnd };
         maFeatures.push_back(aFeature);
     }
 }
 
-namespace {
+namespace
+{
 
 struct SubRun
 {
@@ -83,18 +84,19 @@ struct SubRun
 
 }
 
-namespace {
-    int32_t GetVerticalOrientation(sal_UCS4 cCh, const LanguageTag& rTag)
-    {
-        // Override orientation of fullwidth colon , semi-colon,
-        // and Bopomofo tonal marks.
-        if ((cCh == 0xff1a || cCh == 0xff1b
-           || cCh == 0x2ca || cCh == 0x2cb || cCh == 0x2c7 || cCh == 0x2d9)
-                && rTag.getLanguage() == "zh")
-            return U_VO_TRANSFORMED_UPRIGHT;
+namespace
+{
+int32_t GetVerticalOrientation(sal_UCS4 cCh, const LanguageTag& rTag)
+{
+    // Override orientation of fullwidth colon , semi-colon,
+    // and Bopomofo tonal marks.
+    if ((cCh == 0xff1a || cCh == 0xff1b || cCh == 0x2ca || cCh == 0x2cb || cCh == 0x2c7
+         || cCh == 0x2d9)
+        && rTag.getLanguage() == "zh")
+        return U_VO_TRANSFORMED_UPRIGHT;
 
-        return u_getIntPropertyValue(cCh, UCHAR_VERTICAL_ORIENTATION);
-    }
+    return u_getIntPropertyValue(cCh, UCHAR_VERTICAL_ORIENTATION);
+}
 } // namespace
 
 SalLayoutGlyphs GenericSalLayout::GetGlyphs() const
@@ -104,7 +106,8 @@ SalLayoutGlyphs GenericSalLayout::GetGlyphs() const
     return glyphs;
 }
 
-void GenericSalLayout::SetNeedFallback(vcl::text::ImplLayoutArgs& rArgs, sal_Int32 nCharPos, bool bRightToLeft)
+void GenericSalLayout::SetNeedFallback(vcl::text::ImplLayoutArgs& rArgs, sal_Int32 nCharPos,
+                                       bool bRightToLeft)
 {
     if (nCharPos < 0 || mbFuzzing)
         return;
@@ -120,14 +123,12 @@ void GenericSalLayout::SetNeedFallback(vcl::text::ImplLayoutArgs& rArgs, sal_Int
     //mark all glyphs as missing so the whole thing is rendered with the same
     //font
     sal_Int32 nDone;
-    int nGraphemeEndPos =
-        mxBreak->nextCharacters(rArgs.mrStr, nCharPos, aLocale,
-            i18n::CharacterIteratorMode::SKIPCELL, 1, nDone);
+    int nGraphemeEndPos = mxBreak->nextCharacters(rArgs.mrStr, nCharPos, aLocale,
+                                                  i18n::CharacterIteratorMode::SKIPCELL, 1, nDone);
     // Safely advance nCharPos in case it is a non-BMP character.
     rArgs.mrStr.iterateCodePoints(&nCharPos);
-    int nGraphemeStartPos =
-        mxBreak->previousCharacters(rArgs.mrStr, nCharPos, aLocale,
-            i18n::CharacterIteratorMode::SKIPCELL, 1, nDone);
+    int nGraphemeStartPos = mxBreak->previousCharacters(
+        rArgs.mrStr, nCharPos, aLocale, i18n::CharacterIteratorMode::SKIPCELL, 1, nDone);
 
     // tdf#107612
     // If the start of the fallback run is Mongolian character and the previous
@@ -161,14 +162,14 @@ void GenericSalLayout::AdjustLayout(vcl::text::ImplLayoutArgs& rArgs)
         Justify(rArgs.mnLayoutWidth);
     // apply asian kerning if the glyphs are not already formatted
     else if ((rArgs.mnFlags & SalLayoutFlags::KerningAsian)
-         && !(rArgs.mnFlags & SalLayoutFlags::Vertical))
+             && !(rArgs.mnFlags & SalLayoutFlags::Vertical))
         ApplyAsianKerning(rArgs.mrStr);
 }
 
 void GenericSalLayout::DrawText(SalGraphics& rSalGraphics) const
 {
     //call platform dependent DrawText functions
-    rSalGraphics.DrawTextLayout( *this );
+    rSalGraphics.DrawTextLayout(*this);
 }
 
 // Find if the nominal glyph of the character is an input to “vert” feature.
@@ -188,8 +189,9 @@ bool GenericSalLayout::HasVerticalAlternate(sal_UCS4 aChar, sal_UCS4 aVariationS
 
         // Find all GSUB lookups for “vert” feature.
         hb_set_t* pLookups = hb_set_create();
-        hb_tag_t const pFeatures[] = { HB_TAG('v','e','r','t'), HB_TAG_NONE };
-        hb_ot_layout_collect_lookups(pHbFace, HB_OT_TAG_GSUB, nullptr, nullptr, pFeatures, pLookups);
+        hb_tag_t const pFeatures[] = { HB_TAG('v', 'e', 'r', 't'), HB_TAG_NONE };
+        hb_ot_layout_collect_lookups(pHbFace, HB_OT_TAG_GSUB, nullptr, nullptr, pFeatures,
+                                     pLookups);
         if (!hb_set_is_empty(pLookups))
         {
             // Find the input glyphs in each lookup (i.e. the glyphs that
@@ -199,10 +201,10 @@ bool GenericSalLayout::HasVerticalAlternate(sal_UCS4 aChar, sal_UCS4 aVariationS
             {
                 hb_set_t* pGlyphs = hb_set_create();
                 hb_ot_layout_lookup_collect_glyphs(pHbFace, HB_OT_TAG_GSUB, nIdx,
-                        nullptr,  // glyphs before
-                        pGlyphs,  // glyphs input
-                        nullptr,  // glyphs after
-                        nullptr); // glyphs out
+                                                   nullptr, // glyphs before
+                                                   pGlyphs, // glyphs input
+                                                   nullptr, // glyphs after
+                                                   nullptr); // glyphs out
                 hb_set_union(mpVertGlyphs, pGlyphs);
             }
         }
@@ -212,7 +214,8 @@ bool GenericSalLayout::HasVerticalAlternate(sal_UCS4 aChar, sal_UCS4 aVariationS
     return hb_set_has(mpVertGlyphs, nGlyphIndex) != 0;
 }
 
-bool GenericSalLayout::LayoutText(vcl::text::ImplLayoutArgs& rArgs, const SalLayoutGlyphsImpl* pGlyphs)
+bool GenericSalLayout::LayoutText(vcl::text::ImplLayoutArgs& rArgs,
+                                  const SalLayoutGlyphsImpl* pGlyphs)
 {
     // No need to touch m_GlyphItems at all for an empty string.
     if (rArgs.mnEndCharPos - rArgs.mnMinCharPos <= 0)
@@ -222,22 +225,22 @@ bool GenericSalLayout::LayoutText(vcl::text::ImplLayoutArgs& rArgs, const SalLay
     {
         // Work with pre-computed glyph items.
         m_GlyphItems = *pGlyphs;
-        for(const GlyphItem& item : m_GlyphItems)
-            if(!item.glyphId())
+        for (const GlyphItem& item : m_GlyphItems)
+            if (!item.glyphId())
                 SetNeedFallback(rArgs, item.charPos(), item.IsRTLGlyph());
         // Some flags are set as a side effect of text layout, restore them here.
         rArgs.mnFlags |= pGlyphs->GetFlags();
         return true;
     }
 
-    hb_font_t *pHbFont = GetFont().GetHbFont();
+    hb_font_t* pHbFont = GetFont().GetHbFont();
     bool isGraphite = GetFont().IsGraphiteFont();
 
     int nGlyphCapacity = 2 * (rArgs.mnEndCharPos - rArgs.mnMinCharPos);
     m_GlyphItems.reserve(nGlyphCapacity);
 
     const int nLength = rArgs.mrStr.getLength();
-    const sal_Unicode *pStr = rArgs.mrStr.getStr();
+    const sal_Unicode* pStr = rArgs.mrStr.getStr();
 
     std::optional<vcl::text::TextLayoutCache> oNewScriptRun;
     vcl::text::TextLayoutCache const* pTextLayout;
@@ -260,7 +263,7 @@ bool GenericSalLayout::LayoutText(vcl::text::ImplLayoutArgs& rArgs, const SalLay
     {
         hb_font_extents_t extents;
         if (hb_font_get_h_extents(pHbFont, &extents))
-            nBaseOffset = ( extents.ascender + extents.descender ) / 2.0;
+            nBaseOffset = (extents.ascender + extents.descender) / 2.0;
     }
 
     hb_buffer_t* pHbBuffer = hb_buffer_create();
@@ -270,7 +273,7 @@ bool GenericSalLayout::LayoutText(vcl::text::ImplLayoutArgs& rArgs, const SalLay
     if (rArgs.mnFlags & SalLayoutFlags::DisableKerning)
     {
         SAL_INFO("vcl.harfbuzz", "Disabling kerning for font: " << rFontSelData.maTargetName);
-        maFeatures.push_back({ HB_TAG('k','e','r','n'), 0, 0, static_cast<unsigned int>(-1) });
+        maFeatures.push_back({ HB_TAG('k', 'e', 'r', 'n'), 0, 0, static_cast<unsigned int>(-1) });
     }
 
     if (rArgs.mnFlags & SalLayoutFlags::DisableLigatures)
@@ -279,8 +282,8 @@ bool GenericSalLayout::LayoutText(vcl::text::ImplLayoutArgs& rArgs, const SalLay
 
         // Both of these are optional ligatures, enabled by default but not for
         // orthographically-required ligatures.
-        maFeatures.push_back({ HB_TAG('l','i','g','a'), 0, 0, static_cast<unsigned int>(-1) });
-        maFeatures.push_back({ HB_TAG('c','l','i','g'), 0, 0, static_cast<unsigned int>(-1) });
+        maFeatures.push_back({ HB_TAG('l', 'i', 'g', 'a'), 0, 0, static_cast<unsigned int>(-1) });
+        maFeatures.push_back({ HB_TAG('c', 'l', 'i', 'g'), 0, 0, static_cast<unsigned int>(-1) });
     }
 
     ParseFeatures(rFontSelData.maTargetName);
@@ -313,7 +316,8 @@ bool GenericSalLayout::LayoutText(vcl::text::ImplLayoutArgs& rArgs, const SalLay
         if (isGraphite)
         {
             hb_script_t aScript = hb_icu_script_to_script(pTextLayout->runs[k].nCode);
-            aSubRuns.push_back({ nBidiMinRunPos, nBidiEndRunPos, aScript, bRightToLeft ? HB_DIRECTION_RTL : HB_DIRECTION_LTR });
+            aSubRuns.push_back({ nBidiMinRunPos, nBidiEndRunPos, aScript,
+                                 bRightToLeft ? HB_DIRECTION_RTL : HB_DIRECTION_LTR });
         }
         else
         {
@@ -353,9 +357,9 @@ bool GenericSalLayout::LayoutText(vcl::text::ImplLayoutArgs& rArgs, const SalLay
                         // they should be shaped in horizontal direction
                         // and then rotated.
                         // See http://unicode.org/reports/tr50/#vo
-                        if (aVo == U_VO_UPRIGHT || aVo == U_VO_TRANSFORMED_UPRIGHT ||
-                            (aVo == U_VO_TRANSFORMED_ROTATED &&
-                             HasVerticalAlternate(aChar, aVariationSelector)))
+                        if (aVo == U_VO_UPRIGHT || aVo == U_VO_TRANSFORMED_UPRIGHT
+                            || (aVo == U_VO_TRANSFORMED_ROTATED
+                                && HasVerticalAlternate(aChar, aVariationSelector)))
                         {
                             aDirection = HB_DIRECTION_TTB;
                         }
@@ -364,7 +368,8 @@ bool GenericSalLayout::LayoutText(vcl::text::ImplLayoutArgs& rArgs, const SalLay
                             aDirection = bRightToLeft ? HB_DIRECTION_RTL : HB_DIRECTION_LTR;
                         }
 
-                        if (aSubRuns.empty() || aSubRuns.back().maDirection != aDirection || aSubRuns.back().maScript != aScript)
+                        if (aSubRuns.empty() || aSubRuns.back().maDirection != aDirection
+                            || aSubRuns.back().maScript != aScript)
                             aSubRuns.push_back({ nPrevIdx, nIdx, aScript, aDirection });
                         else
                             aSubRuns.back().mnEnd = nIdx;
@@ -407,30 +412,34 @@ bool GenericSalLayout::LayoutText(vcl::text::ImplLayoutArgs& rArgs, const SalLay
             hb_buffer_set_script(pHbBuffer, aSubRun.maScript);
             if (!msLanguage.isEmpty())
             {
-                hb_buffer_set_language(pHbBuffer, hb_language_from_string(msLanguage.getStr(), msLanguage.getLength()));
+                hb_buffer_set_language(pHbBuffer, hb_language_from_string(msLanguage.getStr(),
+                                                                          msLanguage.getLength()));
             }
             else
             {
-                OString sLanguage = OUStringToOString(rArgs.maLanguageTag.getBcp47(), RTL_TEXTENCODING_ASCII_US);
-                hb_buffer_set_language(pHbBuffer, hb_language_from_string(sLanguage.getStr(), sLanguage.getLength()));
+                OString sLanguage
+                    = OUStringToOString(rArgs.maLanguageTag.getBcp47(), RTL_TEXTENCODING_ASCII_US);
+                hb_buffer_set_language(
+                    pHbBuffer, hb_language_from_string(sLanguage.getStr(), sLanguage.getLength()));
             }
             hb_buffer_set_flags(pHbBuffer, static_cast<hb_buffer_flags_t>(nHbFlags));
-            hb_buffer_add_utf16(
-                pHbBuffer, reinterpret_cast<uint16_t const *>(pStr), nLength,
-                nMinRunPos, nRunLen);
+            hb_buffer_add_utf16(pHbBuffer, reinterpret_cast<uint16_t const*>(pStr), nLength,
+                                nMinRunPos, nRunLen);
 
             // The shapers that we want HarfBuzz to use, in the order of
             // preference.
-            const char*const pHbShapers[] = { "graphite2", "ot", "fallback", nullptr };
-            bool ok = hb_shape_full(pHbFont, pHbBuffer, maFeatures.data(), maFeatures.size(), pHbShapers);
+            const char* const pHbShapers[] = { "graphite2", "ot", "fallback", nullptr };
+            bool ok = hb_shape_full(pHbFont, pHbBuffer, maFeatures.data(), maFeatures.size(),
+                                    pHbShapers);
             assert(ok);
-            (void) ok;
+            (void)ok;
 
             int nRunGlyphCount = hb_buffer_get_length(pHbBuffer);
-            hb_glyph_info_t *pHbGlyphInfos = hb_buffer_get_glyph_infos(pHbBuffer, nullptr);
-            hb_glyph_position_t *pHbPositions = hb_buffer_get_glyph_positions(pHbBuffer, nullptr);
+            hb_glyph_info_t* pHbGlyphInfos = hb_buffer_get_glyph_infos(pHbBuffer, nullptr);
+            hb_glyph_position_t* pHbPositions = hb_buffer_get_glyph_positions(pHbBuffer, nullptr);
 
-            for (int i = 0; i < nRunGlyphCount; ++i) {
+            for (int i = 0; i < nRunGlyphCount; ++i)
+            {
                 int32_t nGlyphIndex = pHbGlyphInfos[i].codepoint;
                 int32_t nCharPos = pHbGlyphInfos[i].cluster;
                 int32_t nCharCount = 0;
@@ -459,8 +468,9 @@ bool GenericSalLayout::LayoutText(vcl::text::ImplLayoutArgs& rArgs, const SalLay
                         if (nNextCharPos == nCharPos)
                             nNextCharPos = nEndRunPos;
                         nCharCount = nNextCharPos - nCharPos;
-                        if ((i == 0 || pHbGlyphInfos[i].cluster != pHbGlyphInfos[i - 1].cluster) &&
-                            (i < nRunGlyphCount - 1 && pHbGlyphInfos[i].cluster == pHbGlyphInfos[i + 1].cluster))
+                        if ((i == 0 || pHbGlyphInfos[i].cluster != pHbGlyphInfos[i - 1].cluster)
+                            && (i < nRunGlyphCount - 1
+                                && pHbGlyphInfos[i].cluster == pHbGlyphInfos[i + 1].cluster))
                             bClusterStart = true;
                     }
                 }
@@ -468,7 +478,8 @@ bool GenericSalLayout::LayoutText(vcl::text::ImplLayoutArgs& rArgs, const SalLay
                 {
                     // If the cluster is the same as previous glyph, then this
                     // will be consumed later, skip.
-                    if (i < nRunGlyphCount - 1 && pHbGlyphInfos[i].cluster == pHbGlyphInfos[i + 1].cluster)
+                    if (i < nRunGlyphCount - 1
+                        && pHbGlyphInfos[i].cluster == pHbGlyphInfos[i + 1].cluster)
                     {
                         nCharCount = 0;
                         bInCluster = true;
@@ -485,8 +496,9 @@ bool GenericSalLayout::LayoutText(vcl::text::ImplLayoutArgs& rArgs, const SalLay
                         if (nNextCharPos == nCharPos)
                             nNextCharPos = nEndRunPos;
                         nCharCount = nNextCharPos - nCharPos;
-                        if ((i == nRunGlyphCount - 1 || pHbGlyphInfos[i].cluster != pHbGlyphInfos[i + 1].cluster) &&
-                            (i > 0 && pHbGlyphInfos[i].cluster == pHbGlyphInfos[i - 1].cluster))
+                        if ((i == nRunGlyphCount - 1
+                             || pHbGlyphInfos[i].cluster != pHbGlyphInfos[i + 1].cluster)
+                            && (i > 0 && pHbGlyphInfos[i].cluster == pHbGlyphInfos[i - 1].cluster))
                             bClusterStart = true;
                     }
                 }
@@ -515,10 +527,12 @@ bool GenericSalLayout::LayoutText(vcl::text::ImplLayoutArgs& rArgs, const SalLay
                 if (u_isUWhiteSpace(aChar))
                     nGlyphFlags |= GlyphItemFlags::IS_SPACING;
 
-                if (hb_glyph_info_get_glyph_flags(&pHbGlyphInfos[i]) & HB_GLYPH_FLAG_UNSAFE_TO_BREAK)
+                if (hb_glyph_info_get_glyph_flags(&pHbGlyphInfos[i])
+                    & HB_GLYPH_FLAG_UNSAFE_TO_BREAK)
                     nGlyphFlags |= GlyphItemFlags::IS_UNSAFE_TO_BREAK;
 
-                if (hb_glyph_info_get_glyph_flags(&pHbGlyphInfos[i]) & HB_GLYPH_FLAG_SAFE_TO_INSERT_TATWEEL)
+                if (hb_glyph_info_get_glyph_flags(&pHbGlyphInfos[i])
+                    & HB_GLYPH_FLAG_SAFE_TO_INSERT_TATWEEL)
                     nGlyphFlags |= GlyphItemFlags::IS_SAFE_TO_INSERT_KASHIDA;
 
                 double nAdvance, nXOffset, nYOffset;
@@ -529,24 +543,11 @@ bool GenericSalLayout::LayoutText(vcl::text::ImplLayoutArgs& rArgs, const SalLay
                     nAdvance = -pHbPositions[i].y_advance;
                     nXOffset = -pHbPositions[i].y_offset;
                     nYOffset = -pHbPositions[i].x_offset - nBaseOffset;
-
-                    if (GetFont().NeedOffsetCorrection(pHbPositions[i].y_offset))
-                    {
-                        // We need glyph's advance, top bearing, and height to
-                        // correct y offset.
-                        basegfx::B2DRectangle aRect;
-                        // Get cached bound rect value for the font,
-                        GetFont().GetGlyphBoundRect(nGlyphIndex, aRect, true);
-
-                        nXOffset = -(aRect.getMinX() / nXScale  + ( pHbPositions[i].y_advance
-                                    + ( aRect.getHeight() / nXScale ) ) / 2.0 );
-                    }
-
                 }
                 else
                 {
-                    nAdvance =  pHbPositions[i].x_advance;
-                    nXOffset =  pHbPositions[i].x_offset;
+                    nAdvance = pHbPositions[i].x_advance;
+                    nXOffset = pHbPositions[i].x_offset;
                     nYOffset = -pHbPositions[i].y_offset;
                 }
 
@@ -608,7 +609,7 @@ void GenericSalLayout::GetCharWidths(std::vector<double>& rCharWidths, const OUS
             while (nPos < aGlyphItem.charPos() + aGlyphItem.charCount())
             {
                 nPos = xBreak->nextCharacters(rStr, nPos, aLocale,
-                    css::i18n::CharacterIteratorMode::SKIPCELL, 1, nDone);
+                                              css::i18n::CharacterIteratorMode::SKIPCELL, 1, nDone);
                 nGraphemeCount++;
             }
         }
@@ -623,8 +624,9 @@ void GenericSalLayout::GetCharWidths(std::vector<double>& rCharWidths, const OUS
             unsigned int nCarets = nGraphemeCount;
             std::vector<hb_position_t> aCarets(nGraphemeCount);
             hb_ot_layout_get_ligature_carets(GetFont().GetHbFont(),
-                aGlyphItem.IsRTLGlyph() ? HB_DIRECTION_RTL : HB_DIRECTION_LTR,
-                aGlyphItem.glyphId(), 0, &nCarets, aCarets.data());
+                                             aGlyphItem.IsRTLGlyph() ? HB_DIRECTION_RTL
+                                                                     : HB_DIRECTION_LTR,
+                                             aGlyphItem.glyphId(), 0, &nCarets, aCarets.data());
 
             // Carets are 1-less than the grapheme count (since the last
             // position is defined by glyph width), if the count does not
@@ -669,7 +671,7 @@ void GenericSalLayout::GetCharWidths(std::vector<double>& rCharWidths, const OUS
             {
                 rCharWidths[nPos - mnMinCharPos] += nWidth;
                 nPos = xBreak->nextCharacters(rStr, nPos, aLocale,
-                    css::i18n::CharacterIteratorMode::SKIPCELL, 1, nDone);
+                                              css::i18n::CharacterIteratorMode::SKIPCELL, 1, nDone);
             }
         }
         else
@@ -830,8 +832,9 @@ bool GenericSalLayout::IsKashidaPosValid(int nCharPos, int nNextCharPos) const
     // Search for glyph items corresponding to nCharPos and nNextCharPos.
     auto const& rGlyph = std::find_if(m_GlyphItems.begin(), m_GlyphItems.end(),
                                       [&](const GlyphItem& g) { return g.charPos() == nCharPos; });
-    auto const& rNextGlyph = std::find_if(m_GlyphItems.begin(), m_GlyphItems.end(),
-                                          [&](const GlyphItem& g) { return g.charPos() == nNextCharPos; });
+    auto const& rNextGlyph
+        = std::find_if(m_GlyphItems.begin(), m_GlyphItems.end(),
+                       [&](const GlyphItem& g) { return g.charPos() == nNextCharPos; });
 
     // If either is not found then a ligature is created at this position, we
     // can’t insert Kashida here.
