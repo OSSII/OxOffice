@@ -119,7 +119,7 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="lbBuild">
-                    <property name="visible">False</property>
+                    <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="hexpand">True</property>
                     <property name="label" translatable="yes" context="aboutdialog|lbBuild">Build:</property>
@@ -198,7 +198,7 @@
                 <child>
                   <object class="GtkLinkButton" id="lbBuildString">
                     <property name="label">0815</property>
-                    <property name="visible">False</property>
+                    <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                     <property name="relief">none</property>
@@ -377,7 +377,7 @@
             </child>
             <child>
               <object class="GtkBox">
-                <property name="visible">False</property>
+                <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">center</property>
                 <property name="spacing">12</property>
@@ -436,7 +436,7 @@
             </child>
             <child>
               <object class="GtkBox">
-                <property name="visible">False</property>
+                <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="spacing">12</property>
                 <child>
