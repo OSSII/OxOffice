@@ -281,7 +281,26 @@ LoFontSubstitution::LoFontSubstitution()
         { "Noto Sans Mono CJK HK", {u"思源黑體 香港 HW", "Source Han Sans HW HC"} },
         { "Noto Sans Mono CJK SC", {u"思源黑体 HW", "Source Han Sans HW SC"} },
         { "Noto Sans Mono CJK JP", {u"源ノ角ゴシック HW", "Source Han Sans HW"} },
-        { "Noto Sans Mono CJK KR", {u"본고딕 HW", "Source Han Sans HW K"} }
+        { "Noto Sans Mono CJK KR", {u"본고딕 HW", "Source Han Sans HW K"} },
+        //---------------
+        // Corresponds Google Noto Serif CJK font to Source Han Serif font.
+        { "Noto Serif TC", {u"思源宋體", "Source Han Serif TC"} },
+        { "Noto Serif HK", {u"思源宋體 香港", "Source Han Serif HC"} },
+        { "Noto Serif SC", {u"思源宋体", "Source Han Serif SC"} },
+        { "Noto Serif JP", {u"源ノ明朝", "Source Han Serif"} },
+        { "Noto Serif KR", {u"본명조", "Source Han Serif K"} },
+        // Corresponds Google Noto Sans CJK font to Source Han Sans font.
+        { "Noto Sans TC", {u"思源黑體", "Source Han Sans TC"} },
+        { "Noto Sans HK", {u"思源黑體 香港", "Source Han Sans HC"} },
+        { "Noto Sans SC", {u"思源黑体", "Source Han Sans SC"} },
+        { "Noto Sans JP", {u"源ノ角ゴシック", "Source Han Sans"} },
+        { "Noto Sans KR", {u"본고딕", "Source Han Sans K"} },
+        // Corresponds Google Noto Sans Mono CJK font to Source Han Sans HW font.
+        { "Noto Sans Mono TC", {u"思源黑體 HW", "Source Han Sans HW TC"} },
+        { "Noto Sans Mono HK", {u"思源黑體 香港 HW", "Source Han Sans HW HC"} },
+        { "Noto Sans Mono SC", {u"思源黑体 HW", "Source Han Sans HW SC"} },
+        { "Noto Sans Mono JP", {u"源ノ角ゴシック HW", "Source Han Sans HW"} },
+        { "Noto Sans Mono KR", {u"본고딕 HW", "Source Han Sans HW K"} }
     };
 
     for (auto& aCJKFeature : aCJKFeaturesMap)
@@ -546,18 +565,19 @@ bool LoFontSubstitution::GetCompatible(FontSelectPattern& rFSD) const
     const PhysicalFontCollection* pFontCollection = ImplGetSVData()->maGDIData.mxScreenFontList.get();
     PhysicalFontFamily* pFoundData = nullptr;
 
-    // Check if there are compatible fonts
-    auto it = maCompatibleFonts.find(rFSD.maTargetName);
-    if (it != maCompatibleFonts.end())
+    // Check if the font name is in the compatible font list
+    for (const auto& it : maCompatibleFonts)
     {
-        // Check if the font name is in the compatible font list
-        for (auto &it2 : it->second)
+        if (rFSD.maTargetName.indexOf(it.first) != -1)
         {
-            pFoundData = pFontCollection->FindFontFamily(it2);
-            if (pFoundData)
+            for (const auto& it2 : it.second)
             {
-                AddToCache(rFSD, pFoundData->GetFamilyName());
-                return true;
+                pFoundData = pFontCollection->FindFontFamily(it2);
+                if (pFoundData)
+                {
+                    AddToCache(rFSD, pFoundData->GetFamilyName());
+                    return true;
+                }
             }
         }
     }
