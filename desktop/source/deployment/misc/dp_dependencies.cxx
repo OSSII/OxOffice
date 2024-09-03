@@ -56,7 +56,8 @@ char const maximalVersionOpenOfficeOrg[] =
     "OpenOffice.org-maximal-version";
 
 OUString getLibreOfficeMajorMinorMicro() {
-    return utl::ConfigManager::getAboutBoxProductVersion();
+    // Because MODA ODF Application 3.8.x.y base on LibreOffice 7.5.9.2.
+    return OUString("7.5.9.2");
 }
 
 OUString getReferenceOpenOfficeOrgMajorMinor() {
