@@ -1,0 +1,11 @@
+[submodule "dictionaries"]
+	path = dictionaries
+	url = https://gerrit.libreoffice.org/dictionaries
+[submodule "helpcontent2"]
+	path = helpcontent2
+	url = https://gerrit.libreoffice.org/help
+	branch = distro/collabora/co-24.04
+[submodule "translations"]
+	path = translations
+	url = https://github.com/MODAODF/translations
+	branch = 24.2
