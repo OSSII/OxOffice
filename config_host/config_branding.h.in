@@ -1,0 +1,14 @@
+/*
+ * Configure customized supplier name and product name.
+ * It is used for packaging and installing files on different platforms.
+ */
+
+#ifndef CONFIG_BRANDING_H
+#define CONFIG_BRANDING_H
+
+#define OOO_VENDOR_WITHOUT_SPACES ""
+#define PRODUCTNAME_WITHOUT_SPACES ""
+#define LOWERCASE_PRODUCTNAME_WITHOUT_SPACES ""
+#define UNIXROOTNAME ""
+
+#endif
