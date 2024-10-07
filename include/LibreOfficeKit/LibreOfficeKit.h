@@ -371,6 +371,13 @@ struct _LibreOfficeKitDocumentClass
                                          int nType,
                                          const char* pText);
 
+    /// @see lok::Document::postWindowExtTextInputEventEventEnhance
+    void (*postWindowExtTextInputEventEnhance) (LibreOfficeKitDocument* pThis,
+                                                unsigned nWindowId,
+                                                int nType,
+                                                const char* pText,
+                                                int nCursorPos);
+
     /// @see lok::Document::getPartInfo().
     char* (*getPartInfo) (LibreOfficeKitDocument* pThis, int nPart);
 

@@ -1350,6 +1350,12 @@ static void doc_postSlideshowCleanup(LibreOfficeKitDocument* pThis);
 static bool doc_renderNextSlideLayer(
     LibreOfficeKitDocument* pThis, unsigned char* pBuffer, bool* bIsBitmapLayer, char** pJsonMsg);
 
+static void doc_postWindowExtTextInputEventEnhance(LibreOfficeKitDocument* pThis,
+                                                   unsigned nWindowId,
+                                                   int nType,
+                                                   const char* pText,
+                                                   int nCursorPos);
+
 } // extern "C"
 
 namespace {
@@ -1477,6 +1483,7 @@ LibLODocument_Impl::LibLODocument_Impl(uno::Reference <css::lang::XComponent> xC
         m_pDocumentClass->registerCallback = doc_registerCallback;
         m_pDocumentClass->postKeyEvent = doc_postKeyEvent;
         m_pDocumentClass->postWindowExtTextInputEvent = doc_postWindowExtTextInputEvent;
+        m_pDocumentClass->postWindowExtTextInputEventEnhance = doc_postWindowExtTextInputEventEnhance;
         m_pDocumentClass->removeTextContext = doc_removeTextContext;
         m_pDocumentClass->postWindowKeyEvent = doc_postWindowKeyEvent;
         m_pDocumentClass->postMouseEvent = doc_postMouseEvent;
@@ -5009,6 +5016,36 @@ static void doc_postWindowExtTextInputEvent(LibreOfficeKitDocument* pThis, unsig
     SfxLokHelper::postExtTextEventAsync(pWindow, nType, OUString::fromUtf8(std::string_view(pText, strlen(pText))));
 }
 
+static void doc_postWindowExtTextInputEventEnhance(LibreOfficeKitDocument* pThis, unsigned nWindowId, int nType, const char* pText, int cursorPos)
+{
+    comphelper::ProfileZone aZone("doc_postWindowExtTextInputEventEnhance");
+
+    SolarMutexGuard aGuard;
+    VclPtr<vcl::Window> pWindow;
+    if (nWindowId == 0)
+    {
+        ITiledRenderable* pDoc = getTiledRenderable(pThis);
+        if (!pDoc)
+        {
+            SetLastExceptionMsg("Document doesn't support tiled rendering");
+            return;
+        }
+        pWindow = pDoc->getDocWindow();
+    }
+    else
+    {
+        pWindow = vcl::Window::FindLOKWindow(nWindowId);
+    }
+
+    if (!pWindow)
+    {
+        SetLastExceptionMsg("No window found for window id: " + OUString::number(nWindowId));
+        return;
+    }
+
+    SfxLokHelper::postExtTextEventAsync(pWindow, nType, OUString::fromUtf8(std::string_view(pText, strlen(pText))), cursorPos);
+}
+
 static void doc_removeTextContext(LibreOfficeKitDocument* pThis, unsigned nLOKWindowId, int nCharBefore, int nCharAfter)
 {
     SolarMutexGuard aGuard;
@@ -7871,6 +7908,7 @@ static char* lo_getVersionInfo(SAL_UNUSED_PARAMETER LibreOfficeKit* /*pThis*/)
         "\"BuildId\": \"%BUILDID\""
         "\"initUnoStatus\": true, "
 	"\"enhanceWatermark\": true, "
+        "\"postWindowExtTextInputEventEnhance\": true, "
 #if BUILDCONFIG_RECORDED
         ", \"BuildConfig\": \"" BUILDCONFIG "\""
 #endif
