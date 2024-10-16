@@ -465,7 +465,7 @@ void GraphicHelper::LOKitGetGraphic(const Graphic& rGraphic)
             aJson.put("result", "Failed to save graphic to temp file");
         }
         SfxViewShell::Current()->libreOfficeKitViewCallback(
-            LOK_CALLBACK_UNO_COMMAND_RESULT, aJson.extractData());
+            LOK_CALLBACK_UNO_COMMAND_RESULT, aJson.finishAndGetAsOString());
     }
 }
 

@@ -1513,8 +1513,7 @@ LibLODocument_Impl::LibLODocument_Impl(uno::Reference <css::lang::XComponent> xC
         m_pDocumentClass->getViewIds = doc_getViewIds;
 
         m_pDocumentClass->renderFont = doc_renderFont;
-        m_pDocumentClass->renderFontOrientation = doc_renderFontOrientation;
-        m_pDocumentClass->renderFontOrientationEnhance = doc_renderFontOrientationEnhance;
+        m_pDocumentClass->renderFontOrientation = doc_renderFontOrientationEnhance;
         m_pDocumentClass->getPartHash = doc_getPartHash;
 
         m_pDocumentClass->paintWindow = doc_paintWindow;
@@ -4292,7 +4291,7 @@ static void doc_initUnoStatus(LibreOfficeKitDocument* /*pThis*/, const char* pCo
     SetLastExceptionMsg();
 
     SfxViewShell* pViewShell = SfxViewShell::Current();
-    SfxViewFrame* pViewFrame = pViewShell? pViewShell->GetViewFrame(): nullptr;
+    SfxViewFrame* pViewFrame = pViewShell ? &pViewShell->GetViewFrame(): nullptr;
 
     if (!pViewShell && !pViewFrame)
     {
@@ -7298,7 +7297,7 @@ unsigned char* doc_renderFontOrientationEnhance(SAL_UNUSED_PARAMETER LibreOffice
     // 設定字型預設大小
     aFont.SetFontSize(Size(0, nDefaultFontSize));
 
-    auto aDevice(VclPtr<VirtualDevice>::Create(DeviceFormat::DEFAULT));
+    auto aDevice(VclPtr<VirtualDevice>::Create(DeviceFormat::WITHOUT_ALPHA));
     aDevice->SetFont(aFont);
 
     int nFontWidth;

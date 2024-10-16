@@ -62,87 +62,86 @@ struct CJKFontFeature
    If it cannot be found, TW Kai will be used.
 */
 
-// TODO: implement dynamic lists
 std::vector<CJKFontFeature> aCJKFeaturesMap =
 {
     // 宋、明體類字型名稱特徵(大小寫視為不同)
     {
-        u"*明;*宋;*바탕;*Ming;*Mincho;*Sung;*Song;*Batang",
+        u"*明;*宋;*바탕;*Ming;*Mincho;*Sung;*Song;*Batang"_ustr,
         {
-            { LANGUAGE_CHINESE_TRADITIONAL, u"新細明體;PMingLiU;蘋果儷細宋;Apple LiSung;思源宋體;Source Han Serif TC;Noto Serif CJK TC" },
-            { LANGUAGE_CHINESE_HONGKONG,    u"細明體_HKSCS;MingLiU_HKSCS;蘋果儷細宋;Apple LiSung;思源宋體 香港;Source Han Serif HC;Noto Serif CJK HK" },
-            { LANGUAGE_CHINESE_MACAU,       u"細明體_HKSCS;MingLiU_HKSCS;蘋果儷細宋;Apple LiSung;思源宋體 香港;Source Han Serif HC;Noto Serif CJK HK" },
-            { LANGUAGE_CHINESE_SIMPLIFIED,  u"宋体;SimSun;宋体-简;Song;思源宋体;Source Han Serif SC;Noto Serif CJK SC" },
-            { LANGUAGE_CHINESE_SINGAPORE,   u"宋体;SimSun;宋体-简;Song;思源宋体;Source Han Serif SC;Noto Serif CJK SC" },
-            { LANGUAGE_JAPANESE,            u"ＭＳ Ｐ明朝;MS PMincho;游明朝体;YuMincho;源ノ明朝;Source Han Serif;Noto Serif CJK JP" },
-            { LANGUAGE_KOREAN,              u"바탕;Batang;일반체;AppleMyungjo;본명조;Source Han Serif K;Noto Serif CJK KR" },
+            { LANGUAGE_CHINESE_TRADITIONAL, u"新細明體;PMingLiU;蘋果儷細宋;Apple LiSung;思源宋體;Source Han Serif TC;Noto Serif CJK TC"_ustr },
+            { LANGUAGE_CHINESE_HONGKONG,    u"細明體_HKSCS;MingLiU_HKSCS;蘋果儷細宋;Apple LiSung;思源宋體 香港;Source Han Serif HC;Noto Serif CJK HK"_ustr },
+            { LANGUAGE_CHINESE_MACAU,       u"細明體_HKSCS;MingLiU_HKSCS;蘋果儷細宋;Apple LiSung;思源宋體 香港;Source Han Serif HC;Noto Serif CJK HK"_ustr },
+            { LANGUAGE_CHINESE_SIMPLIFIED,  u"宋体;SimSun;宋体-简;Song;思源宋体;Source Han Serif SC;Noto Serif CJK SC"_ustr },
+            { LANGUAGE_CHINESE_SINGAPORE,   u"宋体;SimSun;宋体-简;Song;思源宋体;Source Han Serif SC;Noto Serif CJK SC"_ustr },
+            { LANGUAGE_JAPANESE,            u"ＭＳ Ｐ明朝;MS PMincho;游明朝体;YuMincho;源ノ明朝;Source Han Serif;Noto Serif CJK JP"_ustr },
+            { LANGUAGE_KOREAN,              u"바탕;Batang;일반체;AppleMyungjo;본명조;Source Han Serif K;Noto Serif CJK KR"_ustr },
         },
-        u"全字庫正宋體;TW-Sung",
+        u"全字庫正宋體;TW-Sung"_ustr,
         {
-            { LANGUAGE_CHINESE_TRADITIONAL, u"新細明體-ExtB;PMingLiU-ExtB" },
-            { LANGUAGE_CHINESE_HONGKONG,    u"細明體_HKSCS-ExtB;MingLiU_HKSCS-ExtB" },
-            { LANGUAGE_CHINESE_MACAU,       u"細明體_HKSCS-ExtB;MingLiU_HKSCS-ExtB" },
-            { LANGUAGE_CHINESE_SIMPLIFIED,  u"SimSun-ExtB" },
-            { LANGUAGE_CHINESE_SINGAPORE,   u"SimSun-ExtB" },
-            { LANGUAGE_JAPANESE,            u"" },
-            { LANGUAGE_KOREAN,              u"" },
+            { LANGUAGE_CHINESE_TRADITIONAL, u"新細明體-ExtB;PMingLiU-ExtB"_ustr },
+            { LANGUAGE_CHINESE_HONGKONG,    u"細明體_HKSCS-ExtB;MingLiU_HKSCS-ExtB"_ustr },
+            { LANGUAGE_CHINESE_MACAU,       u"細明體_HKSCS-ExtB;MingLiU_HKSCS-ExtB"_ustr },
+            { LANGUAGE_CHINESE_SIMPLIFIED,  u"SimSun-ExtB"_ustr },
+            { LANGUAGE_CHINESE_SINGAPORE,   u"SimSun-ExtB"_ustr },
+            { LANGUAGE_JAPANESE,            u""_ustr },
+            { LANGUAGE_KOREAN,              u""_ustr },
         },
-        u"全字庫正宋體 Ext-B;TW-Sung-Ext-B;全字庫正宋體 Plus;TW-Sung-Plus"
+        u"全字庫正宋體 Ext-B;TW-Sung-Ext-B;全字庫正宋體 Plus;TW-Sung-Plus"_ustr
     },
     // 黑體類字型名稱特徵(大小寫視為不同)
     {
-        u"*黑;*Hei;*Gothic;*蘋方;*苹方;*PingFang",
+        u"*黑;*Hei;*Gothic;*蘋方;*苹方;*PingFang"_ustr,
         {
-            { LANGUAGE_CHINESE_TRADITIONAL, u"微軟正黑體;Microsoft JhengHei;蘋方-繁;PingFang TC;思源黑體;Source Han Sans TC;Noto Sans CJK TC" },
-            { LANGUAGE_CHINESE_HONGKONG,    u"微軟正黑體;Microsoft JhengHei;蘋方-港;PingFang HK;思源黑體 香港;Source Han Sans HC;Noto Sans CJK HK" },
-            { LANGUAGE_CHINESE_MACAU,       u"微軟正黑體;Microsoft JhengHei;蘋方-港;PingFang HK;思源黑體 香港;Source Han Sans HC;Noto Sans CJK HK" },
-            { LANGUAGE_CHINESE_SIMPLIFIED,  u"微软雅黑;Microsoft YaHei;苹方-简;PingFang SC;思源黑体;Source Han Sans SC;Noto Sans CJK SC" },
-            { LANGUAGE_CHINESE_SINGAPORE,   u"微软雅黑;Microsoft YaHei;苹方-简;PingFang SC;思源黑体;Source Han Sans SC;Noto Sans CJK SC" },
-            { LANGUAGE_JAPANESE,            u"源ノ角ゴシック;Source Han Sans;Noto Sans CJK JP" },
-            { LANGUAGE_KOREAN,              u"본고딕;Source Han Sans K;Noto Sans CJK KR" },
+            { LANGUAGE_CHINESE_TRADITIONAL, u"微軟正黑體;Microsoft JhengHei;蘋方-繁;PingFang TC;思源黑體;Source Han Sans TC;Noto Sans CJK TC"_ustr },
+            { LANGUAGE_CHINESE_HONGKONG,    u"微軟正黑體;Microsoft JhengHei;蘋方-港;PingFang HK;思源黑體 香港;Source Han Sans HC;Noto Sans CJK HK"_ustr },
+            { LANGUAGE_CHINESE_MACAU,       u"微軟正黑體;Microsoft JhengHei;蘋方-港;PingFang HK;思源黑體 香港;Source Han Sans HC;Noto Sans CJK HK"_ustr },
+            { LANGUAGE_CHINESE_SIMPLIFIED,  u"微软雅黑;Microsoft YaHei;苹方-简;PingFang SC;思源黑体;Source Han Sans SC;Noto Sans CJK SC"_ustr },
+            { LANGUAGE_CHINESE_SINGAPORE,   u"微软雅黑;Microsoft YaHei;苹方-简;PingFang SC;思源黑体;Source Han Sans SC;Noto Sans CJK SC"_ustr },
+            { LANGUAGE_JAPANESE,            u"源ノ角ゴシック;Source Han Sans;Noto Sans CJK JP"_ustr },
+            { LANGUAGE_KOREAN,              u"본고딕;Source Han Sans K;Noto Sans CJK KR"_ustr },
         },
-        u"微軟正黑體;Microsoft JhengHei;蘋方-繁;PingFang TC;思源黑體;Source Han Sans TC;Noto Sans CJK TC"
+        u"微軟正黑體;Microsoft JhengHei;蘋方-繁;PingFang TC;思源黑體;Source Han Sans TC;Noto Sans CJK TC"_ustr
     },
     // 楷體類字型名稱特徵(大小寫視為不同)
     {
-        u"*楷;*Kai",
+        u"*楷;*Kai"_ustr,
         {
-            { LANGUAGE_CHINESE_TRADITIONAL, u"標楷體;DFKai-SB;標楷體-繁;BiauKai" },
-            { LANGUAGE_CHINESE_HONGKONG,    u"標楷體;DFKai-SB;標楷體-繁;BiauKai" },
-            { LANGUAGE_CHINESE_MACAU,       u"標楷體;DFKai-SB;標楷體-繁;BiauKai" },
-            { LANGUAGE_CHINESE_SIMPLIFIED,  u"楷体;SimKai;楷体-简;Kai" },
-            { LANGUAGE_CHINESE_SINGAPORE,   u"楷体;SimKai;楷体-简;Kai" },
+            { LANGUAGE_CHINESE_TRADITIONAL, u"標楷體;DFKai-SB;標楷體-繁;BiauKai"_ustr },
+            { LANGUAGE_CHINESE_HONGKONG,    u"標楷體;DFKai-SB;標楷體-繁;BiauKai"_ustr },
+            { LANGUAGE_CHINESE_MACAU,       u"標楷體;DFKai-SB;標楷體-繁;BiauKai"_ustr },
+            { LANGUAGE_CHINESE_SIMPLIFIED,  u"楷体;SimKai;楷体-简;Kai"_ustr },
+            { LANGUAGE_CHINESE_SINGAPORE,   u"楷体;SimKai;楷体-简;Kai"_ustr },
         },
-        u"全字庫正楷體;TW-Kai",
+        u"全字庫正楷體;TW-Kai"_ustr,
         {
             // empty map. fallback to Default Union Font(全字庫正楷體 Ext-B;TW-Kai-Ext-B)
         },
-        u"全字庫正楷體 Ext-B;TW-Kai-Ext-B;全字庫正楷體 Plus;TW-Kai-Plus"
+        u"全字庫正楷體 Ext-B;TW-Kai-Ext-B;全字庫正楷體 Plus;TW-Kai-Plus"_ustr
     },
     // 無襯線字型相當於黑體字型
     {
-        u"Sans;sans;Sans-Serif",
+        u"Sans;sans;Sans-Serif"_ustr,
         {
-            { LANGUAGE_CHINESE_TRADITIONAL, u"微軟正黑體;Microsoft JhengHei;蘋方-繁;PingFang TC;思源黑體;Source Han Sans TC;Noto Sans CJK TC" },
-            { LANGUAGE_CHINESE_HONGKONG,    u"微軟正黑體;Microsoft JhengHei;蘋方-港;PingFang HK;思源黑體 香港;Source Han Sans HC;Noto Sans CJK HK" },
-            { LANGUAGE_CHINESE_MACAU,       u"微軟正黑體;Microsoft JhengHei;蘋方-港;PingFang HK;思源黑體 香港;Source Han Sans HC;Noto Sans CJK HK" },
-            { LANGUAGE_CHINESE_SIMPLIFIED,  u"微软雅黑;Microsoft YaHei;苹方-简;PingFang SC;思源黑体;Source Han Sans SC;Noto Sans CJK SC" },
-            { LANGUAGE_CHINESE_SINGAPORE,   u"微软雅黑;Microsoft YaHei;苹方-简;PingFang SC;思源黑体;Source Han Sans SC;Noto Sans CJK SC" },
-            { LANGUAGE_JAPANESE,            u"源ノ角ゴシック;Source Han Sans;Noto Sans CJK JP" },
-            { LANGUAGE_KOREAN,              u"본고딕;Source Han Sans K;Noto Sans CJK KR" },
+            { LANGUAGE_CHINESE_TRADITIONAL, u"微軟正黑體;Microsoft JhengHei;蘋方-繁;PingFang TC;思源黑體;Source Han Sans TC;Noto Sans CJK TC"_ustr },
+            { LANGUAGE_CHINESE_HONGKONG,    u"微軟正黑體;Microsoft JhengHei;蘋方-港;PingFang HK;思源黑體 香港;Source Han Sans HC;Noto Sans CJK HK"_ustr },
+            { LANGUAGE_CHINESE_MACAU,       u"微軟正黑體;Microsoft JhengHei;蘋方-港;PingFang HK;思源黑體 香港;Source Han Sans HC;Noto Sans CJK HK"_ustr },
+            { LANGUAGE_CHINESE_SIMPLIFIED,  u"微软雅黑;Microsoft YaHei;苹方-简;PingFang SC;思源黑体;Source Han Sans SC;Noto Sans CJK SC"_ustr },
+            { LANGUAGE_CHINESE_SINGAPORE,   u"微软雅黑;Microsoft YaHei;苹方-简;PingFang SC;思源黑体;Source Han Sans SC;Noto Sans CJK SC"_ustr },
+            { LANGUAGE_JAPANESE,            u"源ノ角ゴシック;Source Han Sans;Noto Sans CJK JP"_ustr },
+            { LANGUAGE_KOREAN,              u"본고딕;Source Han Sans K;Noto Sans CJK KR"_ustr },
         }
     },
     // 有襯線字型相當於明、宋體字型
     {
-        u"Serif;serif",
+        u"Serif;serif"_ustr,
         {
-            { LANGUAGE_CHINESE_TRADITIONAL, u"新細明體;PMingLiU;蘋果儷細宋;Apple LiSung;思源宋體;Source Han Serif TC;Noto Serif CJK TC" },
-            { LANGUAGE_CHINESE_HONGKONG,    u"細明體_HKSCS;MingLiU_HKSCS;蘋果儷細宋;Apple LiSung;思源宋體 香港;Source Han Serif HC;Noto Serif CJK HK" },
-            { LANGUAGE_CHINESE_MACAU,       u"細明體_HKSCS;MingLiU_HKSCS;蘋果儷細宋;Apple LiSung;思源宋體 香港;Source Han Serif HC;Noto Serif CJK HK" },
-            { LANGUAGE_CHINESE_SIMPLIFIED,  u"宋体;SimSun;宋体-简;Song;思源宋体;Source Han Serif SC;Noto Serif CJK SC" },
-            { LANGUAGE_CHINESE_SINGAPORE,   u"宋体;SimSun;宋体-简;Song;思源宋体;Source Han Serif SC;Noto Serif CJK SC" },
-            { LANGUAGE_JAPANESE,            u"ＭＳ Ｐ明朝;MS PMincho;游明朝体;YuMincho;源ノ明朝;Source Han Serif;Noto Serif CJK JP" },
-            { LANGUAGE_KOREAN,              u"바탕;Batang;일반체;AppleMyungjo;본명조;Source Han Serif K;Noto Serif CJK KR" },
+            { LANGUAGE_CHINESE_TRADITIONAL, u"新細明體;PMingLiU;蘋果儷細宋;Apple LiSung;思源宋體;Source Han Serif TC;Noto Serif CJK TC"_ustr },
+            { LANGUAGE_CHINESE_HONGKONG,    u"細明體_HKSCS;MingLiU_HKSCS;蘋果儷細宋;Apple LiSung;思源宋體 香港;Source Han Serif HC;Noto Serif CJK HK"_ustr },
+            { LANGUAGE_CHINESE_MACAU,       u"細明體_HKSCS;MingLiU_HKSCS;蘋果儷細宋;Apple LiSung;思源宋體 香港;Source Han Serif HC;Noto Serif CJK HK"_ustr },
+            { LANGUAGE_CHINESE_SIMPLIFIED,  u"宋体;SimSun;宋体-简;Song;思源宋体;Source Han Serif SC;Noto Serif CJK SC"_ustr },
+            { LANGUAGE_CHINESE_SINGAPORE,   u"宋体;SimSun;宋体-简;Song;思源宋体;Source Han Serif SC;Noto Serif CJK SC"_ustr },
+            { LANGUAGE_JAPANESE,            u"ＭＳ Ｐ明朝;MS PMincho;游明朝体;YuMincho;源ノ明朝;Source Han Serif;Noto Serif CJK JP"_ustr },
+            { LANGUAGE_KOREAN,              u"바탕;Batang;일반체;AppleMyungjo;본명조;Source Han Serif K;Noto Serif CJK KR"_ustr },
         }
     }
 };
@@ -265,42 +264,42 @@ LoFontSubstitution::LoFontSubstitution()
     maCompatibleFonts =
     {
         // Corresponds Google Noto Serif CJK font to Source Han Serif font.
-        { "Noto Serif CJK TC", {u"思源宋體", "Source Han Serif TC"} },
-        { "Noto Serif CJK HK", {u"思源宋體 香港", "Source Han Serif HC"} },
-        { "Noto Serif CJK SC", {u"思源宋体", "Source Han Serif SC"} },
-        { "Noto Serif CJK JP", {u"源ノ明朝", "Source Han Serif"} },
-        { "Noto Serif CJK KR", {u"본명조", "Source Han Serif K"} },
+        { "Noto Serif CJK TC", {u"思源宋體"_ustr, "Source Han Serif TC"} },
+        { "Noto Serif CJK HK", {u"思源宋體 香港"_ustr, "Source Han Serif HC"} },
+        { "Noto Serif CJK SC", {u"思源宋体"_ustr, "Source Han Serif SC"} },
+        { "Noto Serif CJK JP", {u"源ノ明朝"_ustr, "Source Han Serif"} },
+        { "Noto Serif CJK KR", {u"본명조"_ustr, "Source Han Serif K"} },
         // Corresponds Google Noto Sans CJK font to Source Han Sans font.
-        { "Noto Sans CJK TC", {u"思源黑體", "Source Han Sans TC"} },
-        { "Noto Sans CJK HK", {u"思源黑體 香港", "Source Han Sans HC"} },
-        { "Noto Sans CJK SC", {u"思源黑体", "Source Han Sans SC"} },
-        { "Noto Sans CJK JP", {u"源ノ角ゴシック", "Source Han Sans"} },
-        { "Noto Sans CJK KR", {u"본고딕", "Source Han Sans K"} },
+        { "Noto Sans CJK TC", {u"思源黑體"_ustr, "Source Han Sans TC"} },
+        { "Noto Sans CJK HK", {u"思源黑體 香港"_ustr, "Source Han Sans HC"} },
+        { "Noto Sans CJK SC", {u"思源黑体"_ustr, "Source Han Sans SC"} },
+        { "Noto Sans CJK JP", {u"源ノ角ゴシック"_ustr, "Source Han Sans"} },
+        { "Noto Sans CJK KR", {u"본고딕"_ustr, "Source Han Sans K"} },
         // Corresponds Google Noto Sans Mono CJK font to Source Han Sans HW font.
-        { "Noto Sans Mono CJK TC", {u"思源黑體 HW", "Source Han Sans HW TC"} },
-        { "Noto Sans Mono CJK HK", {u"思源黑體 香港 HW", "Source Han Sans HW HC"} },
-        { "Noto Sans Mono CJK SC", {u"思源黑体 HW", "Source Han Sans HW SC"} },
-        { "Noto Sans Mono CJK JP", {u"源ノ角ゴシック HW", "Source Han Sans HW"} },
-        { "Noto Sans Mono CJK KR", {u"본고딕 HW", "Source Han Sans HW K"} },
+        { "Noto Sans Mono CJK TC", {u"思源黑體 HW"_ustr, "Source Han Sans HW TC"} },
+        { "Noto Sans Mono CJK HK", {u"思源黑體 香港 HW"_ustr, "Source Han Sans HW HC"} },
+        { "Noto Sans Mono CJK SC", {u"思源黑体 HW"_ustr, "Source Han Sans HW SC"} },
+        { "Noto Sans Mono CJK JP", {u"源ノ角ゴシック HW"_ustr, "Source Han Sans HW"} },
+        { "Noto Sans Mono CJK KR", {u"본고딕 HW"_ustr, "Source Han Sans HW K"} },
         //---------------
         // Corresponds Google Noto Serif CJK font to Source Han Serif font.
-        { "Noto Serif TC", {u"思源宋體", "Source Han Serif TC"} },
-        { "Noto Serif HK", {u"思源宋體 香港", "Source Han Serif HC"} },
-        { "Noto Serif SC", {u"思源宋体", "Source Han Serif SC"} },
-        { "Noto Serif JP", {u"源ノ明朝", "Source Han Serif"} },
-        { "Noto Serif KR", {u"본명조", "Source Han Serif K"} },
+        { "Noto Serif TC", {u"思源宋體"_ustr, "Source Han Serif TC"} },
+        { "Noto Serif HK", {u"思源宋體 香港"_ustr, "Source Han Serif HC"} },
+        { "Noto Serif SC", {u"思源宋体"_ustr, "Source Han Serif SC"} },
+        { "Noto Serif JP", {u"源ノ明朝"_ustr, "Source Han Serif"} },
+        { "Noto Serif KR", {u"본명조"_ustr, "Source Han Serif K"} },
         // Corresponds Google Noto Sans CJK font to Source Han Sans font.
-        { "Noto Sans TC", {u"思源黑體", "Source Han Sans TC"} },
-        { "Noto Sans HK", {u"思源黑體 香港", "Source Han Sans HC"} },
-        { "Noto Sans SC", {u"思源黑体", "Source Han Sans SC"} },
-        { "Noto Sans JP", {u"源ノ角ゴシック", "Source Han Sans"} },
-        { "Noto Sans KR", {u"본고딕", "Source Han Sans K"} },
+        { "Noto Sans TC", {u"思源黑體"_ustr, "Source Han Sans TC"} },
+        { "Noto Sans HK", {u"思源黑體 香港"_ustr, "Source Han Sans HC"} },
+        { "Noto Sans SC", {u"思源黑体"_ustr, "Source Han Sans SC"} },
+        { "Noto Sans JP", {u"源ノ角ゴシック"_ustr, "Source Han Sans"} },
+        { "Noto Sans KR", {u"본고딕"_ustr, "Source Han Sans K"} },
         // Corresponds Google Noto Sans Mono CJK font to Source Han Sans HW font.
-        { "Noto Sans Mono TC", {u"思源黑體 HW", "Source Han Sans HW TC"} },
-        { "Noto Sans Mono HK", {u"思源黑體 香港 HW", "Source Han Sans HW HC"} },
-        { "Noto Sans Mono SC", {u"思源黑体 HW", "Source Han Sans HW SC"} },
-        { "Noto Sans Mono JP", {u"源ノ角ゴシック HW", "Source Han Sans HW"} },
-        { "Noto Sans Mono KR", {u"본고딕 HW", "Source Han Sans HW K"} }
+        { "Noto Sans Mono TC", {u"思源黑體 HW"_ustr, "Source Han Sans HW TC"} },
+        { "Noto Sans Mono HK", {u"思源黑體 香港 HW"_ustr, "Source Han Sans HW HC"} },
+        { "Noto Sans Mono SC", {u"思源黑体 HW"_ustr, "Source Han Sans HW SC"} },
+        { "Noto Sans Mono JP", {u"源ノ角ゴシック HW"_ustr, "Source Han Sans HW"} },
+        { "Noto Sans Mono KR", {u"본고딕 HW"_ustr, "Source Han Sans HW K"} }
     };
 
     for (auto& aCJKFeature : aCJKFeaturesMap)
@@ -311,7 +310,7 @@ LoFontSubstitution::LoFontSubstitution()
                   aCJKFeature.maDefaultUnionFont, aCJKFeature.maPrivateUseAreaFont);
     }
 
-    SetFinalCJKFallbackFonts(u"全字庫正宋體;TW-Sung;全字庫正宋體 Ext-B;TW-Sung-Ext-B;全字庫正宋體 Plus;TW-Sung-Plus");
+    SetFinalCJKFallbackFonts(u"全字庫正宋體;TW-Sung;全字庫正宋體 Ext-B;TW-Sung-Ext-B;全字庫正宋體 Plus;TW-Sung-Plus"_ustr);
     // TODO: set final fallback fonts
     // SetFinalFallbackFonts();
 }
@@ -688,7 +687,7 @@ bool LoFontSubstitution::ImplFindSymbolFontSubstitute(FontSelectPattern& rFSD,
 {
     const PhysicalFontCollection* pFontCollection = ImplGetSVData()->maGDIData.mxScreenFontList.get();
     // Whether there is Wingdings font.
-    PhysicalFontFamily* pWingdings = pFontCollection->FindFontFamily(u"Wingdings");
+    PhysicalFontFamily* pWingdings = pFontCollection->FindFontFamily(u"Wingdings"_ustr);
     if (!pWingdings)
         return false;
 

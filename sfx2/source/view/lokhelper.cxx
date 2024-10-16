@@ -1185,7 +1185,7 @@ void SfxLokHelper::postExtTextEventAsync(const VclPtr<vcl::Window> &xWindow,
         assert(false);
     }
     pLOKEv->mpWindow = xWindow;
-    pLOKEv->mnCursorPost = nCursorPos;
+    pLOKEv->mnCursorPos = nCursorPos;
     postEventAsync(pLOKEv);
 }
 

@@ -312,7 +312,7 @@ void SwTextShell::ExecSetNumber(SfxRequest const &rReq)
                             SvxNumberFormat bFmt(aNewSvxNumRule.GetLevel(k));
                             bFmt.SetLabelFollowedBy( SvxNumberFormat::SPACE ); // Bullet use SPACE
                             aNewSvxNumRule.SetLevel(k, bFmt);
-                            pNBOTypeMgr->RelplaceNumRule( aNewSvxNumRule, nChosenItemIdx - 1, nActNumLvl );
+                            pNBOTypeMgr->ReplaceNumRule( aNewSvxNumRule, nChosenItemIdx - 1, nActNumLvl );
                          }
                     }
 

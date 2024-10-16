@@ -1261,12 +1261,12 @@ sal_Int16 DefaultNumberingProvider::getNumberingType( const OUString& rNumbering
 
 const std::map<OUString, sal_Int16> aMSOCompatibleNumberingType =
 {
-    { "1st, 2nd, 3rd, ...",        style::NumberingType::TEXT_NUMBER },
-    { "One, Two, Three, ...",      style::NumberingType::TEXT_CARDINAL },
-    { "First, Second, Third, ...", style::NumberingType::TEXT_ORDINAL },
-    { u"１, ２, ３, ...",           style::NumberingType::FULLWIDTH_ARABIC },
-    { u"一, 一零, 一零零, ...",      style::NumberingType::NUMBER_DIGITAL2_KO },
-    { u"一, 十, 一百(繁), ...",      style::NumberingType::NUMBER_LOWER_ZH },
+    { u"1st, 2nd, 3rd, ..."_ustr,        style::NumberingType::TEXT_NUMBER },
+    { u"One, Two, Three, ..."_ustr,      style::NumberingType::TEXT_CARDINAL },
+    {u"First, Second, Third, ..."_ustr, style::NumberingType::TEXT_ORDINAL },
+    { u"１, ２, ３, ..."_ustr,           style::NumberingType::FULLWIDTH_ARABIC },
+    { u"一, 一零, 一零零, ..."_ustr,      style::NumberingType::NUMBER_DIGITAL2_KO },
+    { u"一, 十, 一百(繁), ..."_ustr,      style::NumberingType::NUMBER_LOWER_ZH },
 };
 
 sal_Int16 DefaultNumberingProvider::getMSOCompatibleNumberingType( const OUString& rNumberingIdentifier )

@@ -61,13 +61,13 @@ struct CorrectMetrics
 std::vector<std::pair<OUString, CorrectMetrics>> aFontCorrectMetricsMap =
 {
     {
-        u"新細明體;PMingLiU;細明體;MingLiU;細明體_HKSCS;MingLiU_HKSCS;新細明體-ExtB;PMingLiU-ExtB;細明體-ExtB;MingLiU-ExtB;細明體_HKSCS-ExtB;MingLiU_HKSCS-ExtB;全字庫正宋體;TW-Sung;全字庫正宋體 Ext-B;TW-Sung-Ext-B;全字庫正宋體 Plus;TW-Sung-Plus",
+        u"新細明體;PMingLiU;細明體;MingLiU;細明體_HKSCS;MingLiU_HKSCS;新細明體-ExtB;PMingLiU-ExtB;細明體-ExtB;MingLiU-ExtB;細明體_HKSCS-ExtB;MingLiU_HKSCS-ExtB;全字庫正宋體;TW-Sung;全字庫正宋體 Ext-B;TW-Sung-Ext-B;全字庫正宋體 Plus;TW-Sung-Plus"_ustr,
         {
             820, 204, -160, 32, 260, 51, 820, -204, 204
         }
     },
     {
-        u"標楷體;DFKai-SB;全字庫正楷體;TW-Kai;全字庫正楷體 Ext-B;TW-Kai-Ext-B;全字庫正楷體 Plus;TW-Kai-Plus",
+        u"標楷體;DFKai-SB;全字庫正楷體;TW-Kai;全字庫正楷體 Ext-B;TW-Kai-Ext-B;全字庫正楷體 Plus;TW-Kai-Plus"_ustr,
         {
             820, 204, -160, 50, 260, 51, 820, -204, 204
         }

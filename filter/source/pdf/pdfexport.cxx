@@ -1542,7 +1542,7 @@ void PDFExport::ImplWriteTiledWatermarkEnhance( vcl::PDFWriter& rWriter, const S
         const tools::Long nBmpWidth = 512;
         const Size aBmpSize(nBmpWidth, nBmpWidth);
         const tools::Rectangle aTextRect(Point(0, 0), aBmpSize); // 文字繪製範圍
-        auto aDevice(VclPtr<VirtualDevice>::Create(DeviceFormat::DEFAULT, DeviceFormat::DEFAULT));
+        auto aDevice(VclPtr<VirtualDevice>::Create(DeviceFormat::WITHOUT_ALPHA));
         aDevice->SetFont(aFont);
         aDevice->SetOutputSizePixel(aBmpSize);
         // 文字允許多行，各行以 \n 分隔
