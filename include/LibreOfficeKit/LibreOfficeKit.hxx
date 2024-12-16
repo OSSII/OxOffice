@@ -957,9 +957,9 @@ public:
     }
 
     /// Render the slide layer
-    bool renderNextSlideLayer(unsigned char* pBuffer, bool* bIsBitmapLayer, char** pJsonMessage)
+    bool renderNextSlideLayer(unsigned char* pBuffer, bool* bIsBitmapLayer, double* pScale, char** pJsonMessage)
     {
-        return mpDoc->pClass->renderNextSlideLayer(mpDoc, pBuffer, bIsBitmapLayer, pJsonMessage);
+        return mpDoc->pClass->renderNextSlideLayer(mpDoc, pBuffer, bIsBitmapLayer, pScale, pJsonMessage);
     }
 
     /// Set named view options
