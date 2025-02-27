@@ -308,7 +308,7 @@ void modifyParagraphs(
     {
         auto& rPrimitives = const_cast<drawinglayer::primitive2d::Primitive2DContainer&>(
             pTextBlock->getChildren());
-        size_t nIndex = 0;
+        int nIndex = 0;
         for (auto& pPrimitive : rPrimitives)
         {
             if (pPrimitive->getPrimitive2DID() == PRIMITIVE2D_ID_TEXTHIERARCHYPARAGRAPHPRIMITIVE2D)
