@@ -7838,13 +7838,13 @@ static char* lo_getVersionInfo(SAL_UNUSED_PARAMETER LibreOfficeKit* /*pThis*/)
     SetLastExceptionMsg();
     return convertOUString(ReplaceStringHookProc(
         u"{ "
+        "\"initUnoStatus\": true, "
+        "\"enhanceWatermark\": true, "
+        "\"postWindowExtTextInputEventEnhance\": true, "
         "\"ProductName\": \"%PRODUCTNAME\", "
         "\"ProductVersion\": \"%PRODUCTVERSION\", "
         "\"ProductExtension\": \"%PRODUCTEXTENSION\", "
         "\"BuildId\": \"%BUILDID\""
-        "\"initUnoStatus\": true, "
-	"\"enhanceWatermark\": true, "
-        "\"postWindowExtTextInputEventEnhance\": true, "
 #if BUILDCONFIG_RECORDED
         ", \"BuildConfig\": \"" BUILDCONFIG "\""
 #endif
