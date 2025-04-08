@@ -1,0 +1,66 @@
+# Docker Compose configuration file
+#
+# References:
+#
+# * Compose Specification | Compose file reference | Reference | Docker Docs
+#   https://docs.docker.com/compose/compose-file/
+#
+# Copyright 2025 林博仁(Buo-ren Lin) <buo.ren.lin@gmail.com>
+# SPDX-License-Identifier: CC-BY-SA-4.0
+name: oxoffice
+services:
+  # Environment for developing the project
+  dev-environment:
+    container_name: oxoffice-dev
+    hostname: oxoffice-dev
+    image: ubuntu:24.04
+    volumes:
+      - type: bind
+        source: ./
+        target: /project
+    environment:
+      # Pass host proxy settings to the container
+      - http_proxy
+      - HTTP_PROXY
+      - https_proxy
+      - HTTPS_PROXY
+      - no_proxy
+      - NO_PROXY
+
+      # Set this environment variable to your local timezone settings for proper operation timestamp
+      - TZ=CST-8
+
+      # Avoid debconf interactive prompts on Debian-like systems
+      - DEBIAN_FRONTEND=noninteractive
+    init: true
+    command: sleep infinity
+    profiles:
+      - dev
+
+  # Environment for testing the project
+  test-environment:
+    container_name: oxoffice-test
+    hostname: oxoffice-test
+    image: ubuntu:24.04
+    volumes:
+      - type: bind
+        source: ./
+        target: /project
+    environment:
+      # Pass host proxy settings to the container
+      - http_proxy
+      - HTTP_PROXY
+      - https_proxy
+      - HTTPS_PROXY
+      - no_proxy
+      - NO_PROXY
+
+      # Set this environment variable to your local timezone settings for proper operation timestamp
+      - TZ=CST-8
+
+      # Avoid debconf interactive prompts on Debian-like systems
+      - DEBIAN_FRONTEND=noninteractive
+    init: true
+    command: sleep infinity
+    profiles:
+      - test
