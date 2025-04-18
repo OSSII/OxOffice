@@ -4586,7 +4586,7 @@ void SwTextFrame::PaintParagraphStylesHighlighting() const
     OUString sStyleName = pColl->GetName();
 
     Color nStyleColor;
-    int nStyleNumber = 0;
+    int nStyleNumber;
 
     bool bSpotlightStyle;
     if (comphelper::LibreOfficeKit::isActive())
