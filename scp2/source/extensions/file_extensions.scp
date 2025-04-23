@@ -74,4 +74,122 @@ End
 
 #endif
 
+
+/* ** ONEKEY2ODF ** */
+
+#ifdef WITH_EXTENSION_ONEKEY2ODF
+
+File gid_File_Oxt_ONEKEY2ODF
+    TXT_FILE_BODY;
+    Styles = (PACKED, FILELIST);
+    Dir = FILELIST_DIR;
+    Name = "onekey2odf.filelist";
+End
+
+#endif
+
+/* ** HYPERLINK ** */
+
+#ifdef WITH_EXTENSION_HYPERLINK
+
+File gid_File_Oxt_HYPERLINK
+	TXT_FILE_BODY;
+	Styles = (PACKED, FILELIST);
+	Dir = FILELIST_DIR;
+	Name = "hyperlink.filelist";
+End
+
+#endif
+
+/* ** ODFHelp ** */
+
+#ifdef WITH_EXTENSION_ODFHELP
+
+File gid_File_Oxt_ODFHELP
+       TXT_FILE_BODY;
+       Styles = (PACKED, FILELIST);
+       Dir = FILELIST_DIR;
+       Name = "ODFHelp.filelist";
+End
+
+#endif
+
+/* ** CPMLIBRE ** */
+
+#ifdef WITH_EXTENSION_CPMLIBRE
+
+File gid_File_Oxt_CPMLIBRE
+    TXT_FILE_BODY;
+    Styles = (PACKED, FILELIST);
+    Dir = FILELIST_DIR;
+    Name = "cpmlibre.filelist";
+End
+
+#endif
+
+/* ** VRTNETWORKEQUIPMENT ** */
+
+#ifdef WITH_EXTENSION_VRTNETWORKEQUIPMENT
+
+File gid_File_Oxt_VRTNETWORKEQUIPMENT
+    TXT_FILE_BODY;
+    Styles = (PACKED, FILELIST);
+    Dir = FILELIST_DIR;
+    Name = "VrtNetworkEquipment.filelist";
+End
+
+#endif
+
+/* ** FORMATCHECK ** */
+
+#ifdef WITH_EXTENSION_FORMATCHECK
+
+File gid_File_Oxt_FORMATCHECK
+    TXT_FILE_BODY;
+    Styles = (PACKED, FILELIST);
+    Dir = FILELIST_DIR;
+    Name = "FormatCheck.filelist";
+End
+
+#endif
+
+/* ** SUBSCRIPTION ** */
+
+#ifdef WITH_EXTENSION_SUBSCRIPTION
+
+File gid_File_Oxt_SUBSCRIPTION
+    TXT_FILE_BODY;
+    Styles = (PACKED, FILELIST);
+    Dir = FILELIST_DIR;
+    Name = "Subscription.filelist";
+End
+
+#endif
+
+/* ** TEMPLATEREPO ** */
+
+#ifdef WITH_EXTENSION_TEMPLATEREPO
+
+File gid_File_Oxt_TEMPLATEREPO
+    TXT_FILE_BODY;
+    Styles = (PACKED, FILELIST);
+    Dir = FILELIST_DIR;
+    Name = "TemplateRepo.filelist";
+End
+
+#endif
+
+/* ** QRCODEPRINT ** */
+
+#ifdef WITH_EXTENSION_QRCODEPRINT
+
+File gid_File_Oxt_QRCODEPRINT
+    TXT_FILE_BODY;
+    Styles = (PACKED, FILELIST);
+    Dir = FILELIST_DIR;
+    Name = "QRcodePrint.filelist";
+End
+
+#endif
+
 #endif
