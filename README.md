@@ -2,9 +2,12 @@
 
 An open-source office productivity suite tailored for Chinese users.
 
+English [臺灣中文](README.zh_TW.md)
+
 ![OxOffice banner](icon-themes/colibre/brand/intro.png "OxOffice banner")
 
 <https://github.com/OSSII/OxOffice>
+
 ![LICENSE logo](https://img.shields.io/badge/License-MPLv2-brightgreen?logoColor=white "This product is primarily licensed under the MPLv2.")
 
 ## Features

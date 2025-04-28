@@ -2,9 +2,12 @@
 
 為中文使用者量身訂做的開放原始碼辦公室生產力套裝軟體
 
+[English](README.md) 臺灣中文
+
 ![OxOffice 橫幅](icon-themes/colibre/brand/intro.png "OxOffice 橫幅")
 
 <https://github.com/OSSII/OxOffice>
+
 ![授權條款標誌](https://img.shields.io/badge/授權條款-MPLv2-brightgreen?logoColor=white "本產品主要使用 MPLv2 授權條款")
 
 ## 特色
