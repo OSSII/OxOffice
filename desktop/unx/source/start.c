@@ -592,7 +592,7 @@ static void extend_library_path(const char *new_element)
 #endif
 
     rtl_uString_newFromAscii(&pEnvName, pathname);
-    rtl_uString_newFromAscii(&pNewEnvVar, new_element);
+    rtl_string2UString(&pNewEnvVar, new_element, strlen(new_element), RTL_TEXTENCODING_UTF8, OSTRING_TO_OUSTRING_CVTFLAGS);
 
     osl_getEnvironment(pEnvName, &pOrigEnvVar);
     if (pOrigEnvVar && pOrigEnvVar->length)
