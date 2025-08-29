@@ -514,16 +514,27 @@ IMPL_LINK_NOARG(SvxGrfCropPage, OrigSizeHdl, weld::Button&, void)
     FieldUnit eUnit = MapToFieldUnit( pPool->GetMetric( pPool->GetWhich(
                                                     SID_ATTR_GRAF_CROP ) ) );
 
+    tools::Long nPageWidth = m_aPageSize.Width();
+    tools::Long nPageHeight = m_aPageSize.Height();
     tools::Long nWidth = m_aOrigSize.Width() -
         lcl_GetValue( *m_xLeftMF, eUnit ) -
         lcl_GetValue( *m_xRightMF, eUnit );
-    m_xWidthMF->set_value( m_xWidthMF->normalize( nWidth ), eUnit );
     tools::Long nHeight = m_aOrigSize.Height() -
         lcl_GetValue( *m_xTopMF, eUnit ) -
         lcl_GetValue( *m_xBottomMF, eUnit );
+    if (nWidth && nWidth > nPageWidth)
+    {
+        double nWidthRatio = static_cast<double>(nPageWidth) / nWidth;
+        nWidth = nPageWidth;
+        nHeight *= nWidthRatio;
+    }
+    m_xWidthMF->set_value( m_xWidthMF->normalize( nWidth ), eUnit );
     m_xHeightMF->set_value( m_xHeightMF->normalize( nHeight ), eUnit );
-    m_xWidthZoomMF->set_value(100, FieldUnit::NONE);
-    m_xHeightZoomMF->set_value(100, FieldUnit::NONE);
+    // Calculate zoom
+    tools::Long nWidthZoom = static_cast<sal_uInt16>((nWidth * 100) / m_aOrigSize.Width());
+    tools::Long nHeightZoom = static_cast<sal_uInt16>((nHeight * 100) / m_aOrigSize.Height());
+    m_xWidthZoomMF->set_value(nWidthZoom, FieldUnit::NONE);
+    m_xHeightZoomMF->set_value(nHeightZoom, FieldUnit::NONE);
     m_bSetOrigSize = true;
 }
 
