@@ -2145,20 +2145,9 @@ IMPL_LINK( SwFramePage, RelHdl, weld::ComboBox&, rLB, void )
 
 IMPL_LINK_NOARG(SwFramePage, RealSizeHdl, weld::Button&, void)
 {
-    sal_Int64 nGrfWidth  = m_aGrfSize.Width();
-    sal_Int64 nGrfHeight = m_aGrfSize.Height();
-
-    m_xWidthED->set_value(m_xWidthED->NormalizePercent(nGrfWidth), FieldUnit::TWIP);
-    SwTwips nTwipsWidth  = static_cast< SwTwips >(m_xWidthED->DenormalizePercent(m_xWidthED->get_value(FieldUnit::TWIP)));
-    // if the graphic is wider than the frame, scale height too
-    if (nTwipsWidth && nTwipsWidth < nGrfWidth)
-    {
-        double nWidthRatio = double(nTwipsWidth) / double(nGrfWidth);
-        nGrfHeight *= nWidthRatio;
-    }
-    m_xHeightED->set_value(m_xHeightED->NormalizePercent(nGrfHeight), FieldUnit::TWIP);
-    SwTwips nTwipsHeight = static_cast< SwTwips >(m_xHeightED->DenormalizePercent(m_xHeightED->get_value(FieldUnit::TWIP)));
-    m_fWidthHeightRatio = nTwipsHeight ? double(nTwipsWidth) / double(nTwipsHeight) : 1.0;
+    m_xWidthED->set_value(m_xWidthED->NormalizePercent(m_aGrfSize.Width()), FieldUnit::TWIP);
+    m_xHeightED->set_value(m_xHeightED->NormalizePercent(m_aGrfSize.Height()), FieldUnit::TWIP);
+    m_fWidthHeightRatio = m_aGrfSize.Height() ? double(m_aGrfSize.Width()) / double(m_aGrfSize.Height()) : 1.0;
     UpdateExample();
 }
 
@@ -2282,10 +2271,6 @@ void SwFramePage::Init(const SfxItemSet& rSet)
 
     if (nHeight != m_xHeightED->get_value(FieldUnit::TWIP))
         m_xHeightED->set_value(nHeight, FieldUnit::TWIP);
-
-    SwTwips nTwipsWidth  = static_cast< SwTwips >(m_xWidthED->DenormalizePercent(m_xWidthED->get_value(FieldUnit::TWIP)));
-    SwTwips nTwipsHeight = static_cast< SwTwips >(m_xHeightED->DenormalizePercent(m_xHeightED->get_value(FieldUnit::TWIP)));
-    m_fWidthHeightRatio = nTwipsHeight ? double(nTwipsWidth) / double(nTwipsHeight) : 1.0;
 
     if (!IsInGraficMode())
     {
