@@ -715,6 +715,11 @@ SwFramePage::SwFramePage(weld::Container* pPage, weld::DialogController* pContro
     m_xRelWidthCB->connect_toggled(aLk2);
     m_xRelHeightCB->connect_toggled(aLk2);
 
+    m_xRelWidthRelationLB->append_text(SvxSwFramePosString::GetString(SwFPos::FRAME));
+    m_xRelWidthRelationLB->append_text(SvxSwFramePosString::GetString(SwFPos::REL_PG_FRAME));
+    m_xRelHeightRelationLB->append_text(SvxSwFramePosString::GetString(SwFPos::FRAME));
+    m_xRelHeightRelationLB->append_text(SvxSwFramePosString::GetString(SwFPos::REL_PG_FRAME));
+
     m_xAutoWidthCB->connect_toggled(LINK(this, SwFramePage, AutoWidthClickHdl));
     m_xAutoHeightCB->connect_toggled(LINK(this, SwFramePage, AutoHeightClickHdl));
 
@@ -933,6 +938,9 @@ void SwFramePage::Reset( const SfxItemSet *rSet )
     ::SetFieldUnit(*m_xAtHorzPosED, aMetric);
     ::SetFieldUnit(*m_xAtVertPosED, aMetric);
 
+    // Get Page Size
+    m_aPageSize = rSet->Get(SID_ATTR_PAGE_SIZE).GetSize();
+
     const SwFormatAnchor& rAnchor = rSet->Get(RES_ANCHOR);
 
     if (const SfxBoolItem* pMathItem = rSet->GetItemIfSet(FN_OLE_IS_MATH, false))
@@ -994,9 +1002,6 @@ void SwFramePage::Reset( const SfxItemSet *rSet )
     // the available space is not yet known so the RefValue has to be calculated from size and relative size values
     // this is needed only if relative values are already set
     const SwFormatFrameSize& rFrameSize = rSet->Get(RES_FRM_SIZE);
-
-    m_xRelWidthRelationLB->append_text(SvxSwFramePosString::GetString(SwFPos::FRAME));
-    m_xRelWidthRelationLB->append_text(SvxSwFramePosString::GetString(SwFPos::REL_PG_FRAME));
     if (rFrameSize.GetWidthPercent() != SwFormatFrameSize::SYNCED && rFrameSize.GetWidthPercent() != 0)
     {
         //calculate the reference value from the width and relative width values
@@ -1008,8 +1013,11 @@ void SwFramePage::Reset( const SfxItemSet *rSet )
     else
         m_xRelWidthRelationLB->set_sensitive(false);
 
-    m_xRelHeightRelationLB->append_text(SvxSwFramePosString::GetString(SwFPos::FRAME));
-    m_xRelHeightRelationLB->append_text(SvxSwFramePosString::GetString(SwFPos::REL_PG_FRAME));
+    // Synchronize checkbox state with relation combo box
+    m_xRelWidthCB->set_active(m_xRelWidthRelationLB->get_sensitive());
+    // Show/hide percent display in width edit field
+    m_xWidthED->ShowPercent(m_xRelWidthCB->get_active());
+
     if (rFrameSize.GetHeightPercent() != SwFormatFrameSize::SYNCED && rFrameSize.GetHeightPercent() != 0)
     {
         //calculate the reference value from the with and relative width values
@@ -1020,6 +1028,11 @@ void SwFramePage::Reset( const SfxItemSet *rSet )
     }
     else
         m_xRelHeightRelationLB->set_sensitive(false);
+
+    // Synchronize checkbox state with relation combo box
+    m_xRelHeightCB->set_active(m_xRelHeightRelationLB->get_sensitive());
+    // Show/hide percent display in height edit field
+    m_xHeightED->ShowPercent(m_xRelHeightCB->get_active());
 
     // general initialisation part
     switch(rAnchor.GetAnchorId())
@@ -1840,14 +1853,24 @@ IMPL_LINK( SwFramePage, RelSizeClickHdl, weld::Toggleable&, rBtn, void )
         m_xWidthED->ShowPercent(rBtn.get_active());
         m_xRelWidthRelationLB->set_sensitive(rBtn.get_active());
         if (rBtn.get_active())
-            m_xWidthED->get()->set_max(MAX_PERCENT_WIDTH, FieldUnit::NONE);
+        {
+            double fWidthRatio = static_cast<double>(m_aPageSize.Width()) / m_aPercentSize.Width();
+            sal_Int64 nMaxPercentWidth = std::round(fWidthRatio * 100);
+
+            m_xWidthED->get()->set_max(nMaxPercentWidth, FieldUnit::NONE);
+        }
     }
     else // rBtn == m_xRelHeightCB.get()
     {
         m_xHeightED->ShowPercent(rBtn.get_active());
         m_xRelHeightRelationLB->set_sensitive(rBtn.get_active());
         if (rBtn.get_active())
-            m_xHeightED->get()->set_max(MAX_PERCENT_HEIGHT, FieldUnit::NONE);
+        {
+            double fHeightRatio = static_cast<double>(m_aPageSize.Height()) / m_aPercentSize.Height();
+            sal_Int64 nMaxPercentHeight = std::round(fHeightRatio * 100);
+
+            m_xHeightED->get()->set_max(nMaxPercentHeight, FieldUnit::NONE);
+        }
     }
 
     RangeModifyHdl();  // correct the values again
@@ -1916,6 +1939,7 @@ void SwFramePage::RangeModifyHdl()
     // set reference values for percental values (100%) ...
     m_xWidthED->SetRefValue(aVal.aPercentSize.Width());
     m_xHeightED->SetRefValue(aVal.aPercentSize.Height());
+    m_aPercentSize = aVal.aPercentSize;
 
     // ... and correctly convert width and height with it
     SwTwips nWidth  = static_cast< SwTwips >(m_xWidthED->DenormalizePercent(m_xWidthED->get_value(FieldUnit::TWIP)));
@@ -2145,9 +2169,52 @@ IMPL_LINK( SwFramePage, RelHdl, weld::ComboBox&, rLB, void )
 
 IMPL_LINK_NOARG(SwFramePage, RealSizeHdl, weld::Button&, void)
 {
-    m_xWidthED->set_value(m_xWidthED->NormalizePercent(m_aGrfSize.Width()), FieldUnit::TWIP);
-    m_xHeightED->set_value(m_xHeightED->NormalizePercent(m_aGrfSize.Height()), FieldUnit::TWIP);
-    m_fWidthHeightRatio = m_aGrfSize.Height() ? double(m_aGrfSize.Width()) / double(m_aGrfSize.Height()) : 1.0;
+    // FIXME?
+    // Is it necessary to refer to m_xFixedRatioCB?
+    bool bFixedRatio = true; // m_xFixedRatioCB->get_active();
+
+    // The size reset should primarily be relative to the paragraph area,
+    // because a newly inserted image is by default relative to the paragraph area.
+    // Either the width or the height is specified relative to the page.
+    bool bRelPageFrame =
+        ((m_xRelWidthCB->get_active() && m_xRelWidthRelationLB->get_active()  == 1) ||
+        (m_xRelHeightCB->get_active() && m_xRelHeightRelationLB->get_active() == 1));
+
+    const Size aMaxSize = bRelPageFrame ? m_aPageSize : m_aPercentSize;
+
+    // Original size
+    sal_Int64 nWidth  = m_aGrfSize.Width();
+    sal_Int64 nHeight = m_aGrfSize.Height();
+
+    // If original width is greater than page width
+    if (nWidth && nWidth > aMaxSize.Width())
+    {
+        // Scale down original size to fit within page width
+        if (bFixedRatio)
+        {
+            double nWidthRatio = static_cast<double>(aMaxSize.Width()) / nWidth;
+            nHeight *= nWidthRatio;
+        }
+
+        nWidth = aMaxSize.Width();
+
+    }
+    // If original height is greater than page height
+    if (nHeight && nHeight > aMaxSize.Height())
+    {
+        // Scale down original size to fit within page height
+        if (bFixedRatio)
+        {
+            double nHeightRatio = static_cast<double>(aMaxSize.Height()) / nHeight;
+            nWidth *= nHeightRatio;
+        }
+
+        nHeight = aMaxSize.Height();
+    }
+
+    m_xWidthED->set_value(m_xWidthED->NormalizePercent(nWidth), FieldUnit::TWIP);
+    m_xHeightED->set_value(m_xHeightED->NormalizePercent(nHeight), FieldUnit::TWIP);
+    m_fWidthHeightRatio = nHeight ? double(nWidth) / double(nHeight) : 1.0;
     UpdateExample();
 }
 

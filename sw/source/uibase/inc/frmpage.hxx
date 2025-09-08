@@ -51,6 +51,8 @@ class SwFramePage final : public SfxTabPage
     sal_uInt16          m_nHtmlMode;
     OUString        m_sDlgType;
     Size            m_aGrfSize;
+    Size            m_aPercentSize; // Size for 100% value
+    Size            m_aPageSize;    // Size for maximum value
     SwTwips         m_nUpperBorder;
     SwTwips         m_nLowerBorder;
     double          m_fWidthHeightRatio; //width-to-height ratio to support the KeepRatio button
