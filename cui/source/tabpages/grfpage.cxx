@@ -514,16 +514,38 @@ IMPL_LINK_NOARG(SvxGrfCropPage, OrigSizeHdl, weld::Button&, void)
     FieldUnit eUnit = MapToFieldUnit( pPool->GetMetric( pPool->GetWhich(
                                                     SID_ATTR_GRAF_CROP ) ) );
 
+    // Get page size
+    tools::Long nPageWidth = m_aPageSize.Width();
+    tools::Long nPageHeight = m_aPageSize.Height();
+    // Get original size
     tools::Long nWidth = m_aOrigSize.Width() -
         lcl_GetValue( *m_xLeftMF, eUnit ) -
         lcl_GetValue( *m_xRightMF, eUnit );
-    m_xWidthMF->set_value( m_xWidthMF->normalize( nWidth ), eUnit );
     tools::Long nHeight = m_aOrigSize.Height() -
         lcl_GetValue( *m_xTopMF, eUnit ) -
         lcl_GetValue( *m_xBottomMF, eUnit );
+
+    // If original width is greater than page width
+    if (nWidth && nWidth > nPageWidth)
+    {
+        // Scale down original size to fit within page width
+        double nWidthRatio = static_cast<double>(nPageWidth) / nWidth;
+        nWidth = nPageWidth;
+        nHeight *= nWidthRatio;
+    }
+    // If original height is greater than page height
+    if (nHeight && nHeight > nPageHeight)
+    {
+        // Scale down original size to fit within page height
+        double nHeightRatio = static_cast<double>(nPageHeight) / nHeight;
+        nHeight = nPageHeight;
+        nWidth *= nHeightRatio;
+    }
+
+    m_xWidthMF->set_value( m_xWidthMF->normalize( nWidth ), eUnit );
     m_xHeightMF->set_value( m_xHeightMF->normalize( nHeight ), eUnit );
-    m_xWidthZoomMF->set_value(100, FieldUnit::NONE);
-    m_xHeightZoomMF->set_value(100, FieldUnit::NONE);
+    m_xWidthZoomMF->set_value(nWidth * 100 / m_aOrigSize.Width(), FieldUnit::NONE);
+    m_xHeightZoomMF->set_value(nHeight * 100 / m_aOrigSize.Height(), FieldUnit::NONE);
     m_bSetOrigSize = true;
 }
 
