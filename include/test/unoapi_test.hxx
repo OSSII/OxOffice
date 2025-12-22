@@ -13,6 +13,7 @@
 #include <sal/config.h>
 
 #include <string_view>
+#include <unordered_map>
 
 #include <rtl/ref.hxx>
 #include <test/bootstrapfixture.hxx>
