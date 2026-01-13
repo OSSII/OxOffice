@@ -2,20 +2,30 @@
 <!DOCTYPE oor:component-data SYSTEM "../../../../../component-update.dtd">
 <oor:component-data xmlns:oor="http://openoffice.org/2001/registry" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:install="http://openoffice.org/2004/installation" oor:name="ToolbarMode" oor:package="org.openoffice.Office.UI">
   <prop oor:name="ActiveWriter">
+    <value install:module="macosx">Default</value>
+    <value install:module="macosxsandbox">Default</value>
     <value>notebookbar.ui</value>
   </prop>
   <prop oor:name="ActiveCalc">
+    <value install:module="macosx">Default</value>
+    <value install:module="macosxsandbox">Default</value>
     <value>notebookbar.ui</value>
   </prop>
   <prop oor:name="ActiveImpress">
+    <value install:module="macosx">Default</value>
+    <value install:module="macosxsandbox">Default</value>
     <value>notebookbar.ui</value>
   </prop>
   <prop oor:name="ActiveDraw">
+    <value install:module="macosx">Default</value>
+    <value install:module="macosxsandbox">Default</value>
     <value>notebookbar.ui</value>
   </prop>
   <node oor:name="Applications">
     <node oor:name="Writer" oor:op="replace">
       <prop oor:name="Active">
+        <value install:module="macosx">Default</value>
+        <value install:module="macosxsandbox">Default</value>
         <value>notebookbar.ui</value>
       </prop>
       <node oor:name="Modes">
@@ -296,6 +306,8 @@
     </node>
     <node oor:name="Calc" oor:op="replace">
       <prop oor:name="Active">
+        <value install:module="macosx">Default</value>
+        <value install:module="macosxsandbox">Default</value>
         <value>notebookbar.ui</value>
       </prop>
       <node oor:name="Modes">
@@ -545,6 +557,8 @@
     </node>
     <node oor:name="Impress" oor:op="replace">
       <prop oor:name="Active">
+        <value install:module="macosx">Default</value>
+        <value install:module="macosxsandbox">Default</value>
         <value>notebookbar.ui</value>
       </prop>
       <node oor:name="Modes">
@@ -800,6 +814,8 @@
     </node>
     <node oor:name="Draw" oor:op="replace">
       <prop oor:name="Active">
+        <value install:module="macosx">Default</value>
+        <value install:module="macosxsandbox">Default</value>
         <value>notebookbar.ui</value>
       </prop>
       <node oor:name="Modes">

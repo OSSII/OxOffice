@@ -37,13 +37,17 @@
 <xsl:param name="LIBO_SHARE_FOLDER"/>
 <xsl:param name="LIBO_SHARE_HELP_FOLDER"/>
 
+<xsl:param name="os_module"/>
+
 <xsl:variable name="schemaRootURL">
     <xsl:value-of select="$schemaRoot"/>
 </xsl:variable>
 <xsl:variable name="schemaURL">
     <xsl:value-of select="$xcs"/>
 </xsl:variable>
-
+<xsl:variable name="os-modules">
+	unx wnt macosx macosxsandbox unixdesktop
+</xsl:variable>
 <!--************************** TEMPLATES ******************************** -->
 <!-- ensure that at least root is available -->
     <xsl:template match="/oor:component-data">
@@ -191,30 +195,26 @@
         <xsl:variable name="applicable-values" select="descendant::value[not (@xml:lang) or (@xml:lang=$fallback-locale) or (@install:module=$module)]"/>
         <xsl:variable name="substantive-nodes" select="descendant-or-self::*[(@oor:finalized='true') or (@oor:mandatory='true') or (@oor:op!='modify')]"/>
 
+	<!-- Get module name -->
+        <xsl:variable name="node-module" select="ancestor-or-self::*/@install:module"/>
+
         <xsl:choose>
-            <!-- go ahead, if we are in the active module -->
-            <xsl:when test="ancestor-or-self::*/@install:module=$module">
-                <xsl:if test="$applicable-values | $substantive-nodes">
-                    <xsl:call-template name="copy-node">
-                        <xsl:with-param name="component-schema" select="$component-schema"/>
-                        <xsl:with-param name="context" select="$context"/>
-                    </xsl:call-template>
-                </xsl:if>
+            <!-- 1. 精確匹配目前傳入的 module (例如 unx)，保留 -->
+            <xsl:when test="$node-module=$os_module">
+                <xsl:call-template name="copy-node">
+                    <xsl:with-param name="component-schema" select="$component-schema"/>
+                    <xsl:with-param name="context" select="$context"/>
+                </xsl:call-template>
             </xsl:when>
-            <!-- strip data from wrong module -->
-            <xsl:when test="ancestor-or-self::*/@install:module"/>
-            <!-- looking for module -->
-            <xsl:when test="$module">
-                <xsl:if test="($applicable-values | $substantive-nodes)/ancestor-or-self::*/@install:module=$module">
-                    <xsl:call-template name="copy-node">
-                        <xsl:with-param name="component-schema" select="$component-schema"/>
-                        <xsl:with-param name="context" select="$context"/>
-                    </xsl:call-template>
-                </xsl:if>
+
+            <!-- 2. 如果目前是平台編譯 (unx)，但節點是「其他平台」標籤，則剔除 -->
+            <xsl:when test="$os_module and contains($os-modules, concat(' ', $os_module, ' ')) and contains($os-modules, concat(' ', $node-module, ' ')) and not($node-module = $os_module)">
+                <!-- 剔除，不執行 copy -->
             </xsl:when>
-            <!-- copying non-module data -->
+
+            <!-- 3. 其他通用情況 (無標籤節點) -->
             <xsl:otherwise>
-                <xsl:if test="($applicable-values | $substantive-nodes)[not(ancestor-or-self::*/@install:module)]">
+                <xsl:if test="$applicable-values | $substantive-nodes">
                     <xsl:call-template name="copy-node">
                         <xsl:with-param name="component-schema" select="$component-schema"/>
                         <xsl:with-param name="context" select="$context"/>
@@ -262,14 +262,33 @@
     </xsl:template>
 
     <xsl:template match="value">
+        <xsl:variable name="val-module" select="@install:module"/>
         <xsl:choose>
-            <xsl:when test="@xml:lang and not(@install:module)"/>
-            <xsl:when test="$module and not(ancestor-or-self::*/@install:module=$module)"/>
-            <xsl:when test="not($module) and ancestor-or-self::*/@install:module"/>
-            <xsl:otherwise>
+            <!-- A. 處理本地化值：絕對不能直接刪除，應遵循原有的 locale 邏輯 -->
+            <xsl:when test="@xml:lang and not($val-module)">
+                <!-- 只有在不傳入 locale 參數時（即 locale-independent pass）才跳過 -->
+                <xsl:if test="string-length($locale) = 0"/> 
+            </xsl:when>
+
+            <!-- B. 匹配目前平台：保留 -->
+            <xsl:when test="$val-module = $os_module">
                 <xsl:copy>
-                    <xsl:apply-templates select = "@*|node()"/>
+                    <xsl:apply-templates select="@*|node()"/>
                 </xsl:copy>
+            </xsl:when>
+
+            <!-- C. 是其他 OS 平台：剔除 -->
+            <xsl:when test="$os_module and contains($os-modules, concat(' ', $os_module, ' ')) and contains($os-modules, concat(' ', $val-module, ' ')) and not($val-module = $os_module)">
+            </xsl:when>
+
+            <!-- D. 通用值與 Fallback 邏輯 -->
+            <xsl:otherwise>
+                <!-- 只有在沒有其他兄弟節點匹配目前平台 ($os_module) 時，才保留這個通用值 -->
+                <xsl:if test="not(../value/@install:module = $os_module)">
+                    <xsl:copy>
+                        <xsl:apply-templates select="@*|node()"/>
+                    </xsl:copy>
+                </xsl:if>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -302,7 +321,7 @@
     <!-- suppress all module markers -->
     <xsl:template match = "@install:module"/>
 
-<!-- compares two values -->
+    <!-- compares two values -->
     <xsl:template name="isRedundant">
         <xsl:param name = "schemaval"/>
         <xsl:param name = "dataval"/>

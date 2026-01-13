@@ -63,6 +63,11 @@ endef
 
 gb_Configuration_LANGS := en-US $(filter-out en-US,$(gb_WITH_LANG))
 
+gb_Configuration_OS_MODULE := $(strip \
+       $(if $(filter MACOSX,$(OS)),$(if $(ENABLE_MACOSX_SANDBOX),macosxsandbox,macosx)) \
+       $(if $(filter WNT,$(OS)),wnt) \
+       $(if $(filter LINUX FREEBSD OPENBSD NETBSD DRAGONFLY,$(OS)),unx))
+
 gb_XcsTarget_XSLT_SchemaVal := $(SRCDIR)/officecfg/util/schema_val.xsl
 gb_XcsTarget_XSLT_SchemaTrim := $(SRCDIR)/officecfg/util/schema_trim.xsl
 gb_XcsTarget_DTD_Schema := $(SRCDIR)/officecfg/registry/component-schema.dtd
@@ -119,6 +124,7 @@ $(call gb_Helper_abbreviate_dirs,\
 		-o $(1) \
 		--stringparam xcs $(call gb_XcsTarget_for_XcuTarget,$(XCUFILE)) \
 		$(gb_Configuration__stringparam_schemaRoot) \
+                $(if $(strip $(gb_Configuration_OS_MODULE)),--stringparam os_module $(gb_Configuration_OS_MODULE)) \
 		--stringparam LIBO_SHARE_FOLDER $(LIBO_SHARE_FOLDER) \
 		--stringparam LIBO_SHARE_HELP_FOLDER $(LIBO_SHARE_HELP_FOLDER) \
 		--path $(SRCDIR)/officecfg/registry \
@@ -261,6 +267,7 @@ $(call gb_Helper_abbreviate_dirs,\
 		--stringparam xcs $(call gb_XcsTarget_for_XcuTarget,$(XCUFILE)) \
 		$(gb_Configuration__stringparam_schemaRoot) \
 		--stringparam locale $(word 2,$(subst /, ,$(2))) \
+                $(if $(strip $(gb_Configuration_OS_MODULE)),--stringparam os_module $(gb_Configuration_OS_MODULE)) \
 		--stringparam LIBO_SHARE_FOLDER $(LIBO_SHARE_FOLDER) \
 		--stringparam LIBO_SHARE_HELP_FOLDER $(LIBO_SHARE_HELP_FOLDER) \
 		--path $(SRCDIR)/officecfg/registry \
