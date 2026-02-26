@@ -152,6 +152,7 @@ sub sign_files      #09.07.2007 10:36
     $commandline_base .= " -p $opt_pass" if ($opt_pass ne "");
     $commandline_base .= " -tr $opt_timestamp_url" if ($opt_timestamp_url ne "");
     $commandline_base .= " -d \"$opt_desc\"" if ($opt_desc ne "");
+    $commandline_base .= " -n \"OSS INTEGRAL INSTITUTE CO., LTD.\"";
 
     # Here switch between:
     # one command line for multiple files (all doesn't work, too much) / for each file one command line
