@@ -24,6 +24,8 @@ use Getopt::Long;
 
 my $debug = 0;
 my $max_files = 400;          # sign $max_files with one command line
+my $max_retries = 3;          # retry signing command up to $max_retries times
+my $retry_delay = 2;          # seconds to wait before retry
 
 #### globals #####
 my $myname      = "";
@@ -172,12 +174,26 @@ sub exec_single_sign        #11.07.2007 09:05
     my $commandline_base = shift;                 # contains whole stuff without the file name
     my $file = "";
     my $commandline = "";
+    my $attempt = 0;
+    my $success = 0;
+    my $error_message = "";
 
     foreach $file (@$files_to_sign)
     {
         $commandline = $commandline_base . " $file";
         print "$commandline\n" if ($debug);
-        execute($commandline);
+        $attempt = 0;
+        $success = 0;
+        $error_message = "";
+        while ( $attempt < $max_retries && !$success ) {
+            ++$attempt;
+            ($success, $error_message) = execute($commandline);
+            if ( !$success && $attempt < $max_retries ) {
+                print "Retry ($attempt/$max_retries): $file\n" if ($opt_verbose);
+                sleep($retry_delay);
+            }
+        }
+        print_error("Signing failed for $file after $max_retries attempts:\n$error_message\n") if (!$success);
     } #foreach
 }   ##exec_single_sign
 
@@ -191,18 +207,45 @@ sub exec_multi_sign     #11.07.2007 08:56
     my $commandline = $commandline_base;          # contains stuff which will be executed
     my $file = "";
     my $counter = 0;
+    my $attempt = 0;
+    my $success = 0;
+    my $error_message = "";
 
     foreach $file (@$files_to_sign)
     {
         $commandline .= " $file";
         ++$counter;
         if ( $counter >= $max_files ) {
-            execute($commandline);
+            $attempt = 0;
+            $success = 0;
+            $error_message = "";
+            while ( $attempt < $max_retries && !$success ) {
+                ++$attempt;
+                ($success, $error_message) = execute($commandline);
+                if ( !$success && $attempt < $max_retries ) {
+                    print "Retry batch ($attempt/$max_retries)\n" if ($opt_verbose);
+                    sleep($retry_delay);
+                }
+            }
+            print_error("Batch signing failed after $max_retries attempts:\n$error_message\n") if (!$success);
             $counter = 0;                        # reset counter
             $commandline = $commandline_base;    # reset command line
         }
     }
-    execute($commandline) if ($counter > 0);
+    if ($counter > 0) {
+        $attempt = 0;
+        $success = 0;
+        $error_message = "";
+        while ( $attempt < $max_retries && !$success ) {
+            ++$attempt;
+            ($success, $error_message) = execute($commandline);
+            if ( !$success && $attempt < $max_retries ) {
+                print "Retry batch ($attempt/$max_retries)\n" if ($opt_verbose);
+                sleep($retry_delay);
+            }
+        }
+        print_error("Batch signing failed after $max_retries attempts:\n$error_message\n") if (!$success);
+    }
 }   ##exec_multi_sign
 
 ############################################################################
@@ -212,6 +255,7 @@ sub execute     #11.07.2007 10:02
     my $commandline = shift;
     my $result = "";
     my $errorlines = "";
+    my $exit_code = 0;
 
     print "$commandline\n" if ($debug);
     open(PIPE, "$commandline 2>&1 |") || die "Error: Cannot execute '$commandline' - $!\n";
@@ -220,7 +264,13 @@ sub execute     #11.07.2007 10:02
         $errorlines .= $result if ($result =~ /SignTool Error\:/);
     } # while
     close PIPE;
-    print_error( "$errorlines\n" ) if ($errorlines);
+    $exit_code = $? >> 8;
+    if ($exit_code != 0 && !$errorlines) {
+        $errorlines = "Command exited with code $exit_code";
+    }
+
+    return (0, "$errorlines\n") if ($errorlines);
+    return (1, "");
 }   ##execute
 
 ############################################################################
