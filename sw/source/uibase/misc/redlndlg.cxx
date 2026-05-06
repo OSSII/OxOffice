@@ -974,6 +974,9 @@ void SwRedlineAcceptDlg::CallAcceptReject( bool bSelect, bool bAccept )
     if (!pView)
         return;
 
+    if (pView->GetDocShell()->IsReadOnly() || pView->IsLokReadOnlyView())
+        return;
+
     SwWrtShell* pSh = pView->GetWrtShellPtr();
     if (!pSh)
         return;
