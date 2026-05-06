@@ -22,6 +22,7 @@
 #include <sfx2/viewfrm.hxx>
 
 #include <sfx2/bindings.hxx>
+#include <svl/srchitem.hxx>
 #include <fupoor.hxx>
 #include <drawdoc.hxx>
 #include <app.hrc>
@@ -97,6 +98,12 @@ FuSearch::~FuSearch()
 
 void FuSearch::SearchAndReplace( const SvxSearchItem* pSearchItem )
 {
+    const SvxSearchCmd eCmd = pSearchItem ? pSearchItem->GetCommand() : SvxSearchCmd::FIND;
+    if ((eCmd == SvxSearchCmd::REPLACE || eCmd == SvxSearchCmd::REPLACE_ALL)
+        && ((mpDoc->GetDocSh() && mpDoc->GetDocSh()->IsReadOnly())
+            || SfxViewShell::IsCurrentLokViewReadOnly()))
+        return;
+
     ViewShellBase* pBase = dynamic_cast<ViewShellBase*>( SfxViewShell::Current() );
     ViewShell* pViewShell = nullptr;
     if (pBase != nullptr)

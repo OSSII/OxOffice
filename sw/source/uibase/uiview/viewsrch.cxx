@@ -286,6 +286,11 @@ void SwView::ExecSearch(SfxRequest& rReq)
             break;
             case SvxSearchCmd::REPLACE:
                 {
+                    if (GetDocShell()->IsReadOnly() || IsCurrentLokViewReadOnly())
+                    {
+                        rReq.SetReturnValue(SfxBoolItem(nSlot, false));
+                        break;
+                    }
 
                     // 1) Replace selection (Not if only attributes should be replaced)
 //JP 27.04.95: Why?
@@ -334,6 +339,11 @@ void SwView::ExecSearch(SfxRequest& rReq)
 
             case SvxSearchCmd::REPLACE_ALL:
                 {
+                    if (GetDocShell()->IsReadOnly() || IsCurrentLokViewReadOnly())
+                    {
+                        rReq.SetReturnValue(SfxBoolItem(nSlot, false));
+                        break;
+                    }
                     SwSearchOptions aOpts( m_pWrtShell.get(), s_pSrchItem->GetBackward() );
                     s_bExtra = false;
                     sal_uLong nFound;
