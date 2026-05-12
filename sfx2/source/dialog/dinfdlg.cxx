@@ -621,6 +621,7 @@ bool SfxDocumentInfoItem::PutValue( const Any& rVal, sal_uInt8 nMemberId )
 SfxDocumentDescPage::SfxDocumentDescPage(weld::Container* pPage, weld::DialogController* pController, const SfxItemSet& rItemSet)
     : SfxTabPage(pPage, pController, "sfx/ui/descriptioninfopage.ui", "DescriptionInfoPage", &rItemSet)
     , m_pInfoItem(nullptr)
+    , m_bReadOnly(false)
     , m_xTitleEd(m_xBuilder->weld_entry("title"))
     , m_xThemaEd(m_xBuilder->weld_entry("subject"))
     , m_xKeywordsEd(m_xBuilder->weld_entry("keywords"))
@@ -649,6 +650,9 @@ std::unique_ptr<SfxTabPage> SfxDocumentDescPage::Create(weld::Container* pPage, 
 
 bool SfxDocumentDescPage::FillItemSet(SfxItemSet *rSet)
 {
+    if (m_bReadOnly)
+        return false;
+
     // Test whether a change is present
     const bool bTitleMod = m_xTitleEd->get_value_changed_from_saved();
     const bool bThemeMod = m_xThemaEd->get_value_changed_from_saved();
@@ -774,7 +778,8 @@ void SfxDocumentDescPage::Reset(const SfxItemSet *rSet)
     m_xCommentEd->save_value();
 
     const SfxBoolItem* pROItem = SfxItemSet::GetItem<SfxBoolItem>(rSet, SID_DOC_READONLY, false);
-    if (pROItem && pROItem->GetValue())
+    m_bReadOnly = pROItem && pROItem->GetValue();
+    if (m_bReadOnly)
     {
         m_xTitleEd->set_editable(false);
         m_xThemaEd->set_editable(false);
@@ -795,6 +800,7 @@ SfxDocumentPage::SfxDocumentPage(weld::Container* pPage, weld::DialogController*
     : SfxTabPage(pPage, pController, "sfx/ui/documentinfopage.ui", "DocumentInfoPage", &rItemSet)
     , bEnableUseUserData( false )
     , bHandleDelete( false )
+    , m_bReadOnly( false )
     , m_xBmp(m_xBuilder->weld_image("icon"))
     , m_xNameED(m_xBuilder->weld_label("nameed"))
     , m_xChangePassBtn(m_xBuilder->weld_button("changepass"))
@@ -817,6 +823,9 @@ SfxDocumentPage::SfxDocumentPage(weld::Container* pPage, weld::DialogController*
     , m_xImagePreferredDpiComboBox(m_xBuilder->weld_combo_box("image-preferred-dpi-combobox"))
 {
     m_xUseUserDataCB->set_accessible_description(SfxResId(STR_A11Y_DESC_USERDATA));
+
+    const SfxBoolItem* pROItem = rItemSet.GetItem<SfxBoolItem>(SID_DOC_READONLY, false);
+    m_bReadOnly = pROItem && pROItem->GetValue();
 
     m_aUnknownSize = m_xShowSizeFT->get_label();
     m_xShowSizeFT->set_label(OUString());
@@ -851,6 +860,8 @@ SfxDocumentPage::~SfxDocumentPage()
 
 IMPL_LINK_NOARG(SfxDocumentPage, DeleteHdl, weld::Button&, void)
 {
+    if (m_bReadOnly)
+        return;
     OUString aName;
     if (bEnableUseUserData && m_xUseUserDataCB->get_active())
         aName = SvtUserOptions().GetFullName();
@@ -884,6 +895,8 @@ IMPL_LINK_NOARG(SfxDocumentPage, ImagePreferredDPICheckBoxClicked, weld::Togglea
 
 IMPL_LINK_NOARG(SfxDocumentPage, ChangePassHdl, weld::Button&, void)
 {
+    if (m_bReadOnly)
+        return;
     SfxObjectShell* pShell = SfxObjectShell::Current();
     do
     {
@@ -965,6 +978,11 @@ void SfxDocumentPage::ImplUpdateSignatures()
 
 void SfxDocumentPage::ImplCheckPasswordState()
 {
+    if (m_bReadOnly)
+    {
+        m_xChangePassBtn->set_sensitive(false);
+        return;
+    }
     SfxObjectShell* pShell = SfxObjectShell::Current();
     do
     {
@@ -1000,6 +1018,9 @@ void SfxDocumentPage::EnableUseUserData()
 
 bool SfxDocumentPage::FillItemSet( SfxItemSet* rSet )
 {
+    if (m_bReadOnly)
+        return false;
+
     bool bRet = false;
 
     if ( !bHandleDelete && bEnableUseUserData &&
@@ -1286,6 +1307,15 @@ void SfxDocumentPage::Reset( const SfxItemSet* rSet )
         m_xImagePreferredDpiComboBox->set_entry_text("");
     }
 
+    if (m_bReadOnly)
+    {
+        m_xChangePassBtn->set_sensitive(false);
+        m_xDeleteBtn->set_sensitive(false);
+        m_xUseUserDataCB->set_sensitive(false);
+        m_xUseThumbnailSaveCB->set_sensitive(false);
+        m_xImagePreferredDpiCheckButton->set_sensitive(false);
+        m_xImagePreferredDpiComboBox->set_sensitive(false);
+    }
 }
 
 SfxDocumentInfoDialog::SfxDocumentInfoDialog(weld::Window* pParent, const SfxItemSet& rItemSet)
@@ -2106,6 +2136,7 @@ void CustomPropertiesControl::SetCustomProperties(std::vector< std::unique_ptr<C
 // class SfxCustomPropertiesPage -----------------------------------------
 SfxCustomPropertiesPage::SfxCustomPropertiesPage(weld::Container* pPage, weld::DialogController* pController, const SfxItemSet& rItemSet )
     : SfxTabPage(pPage, pController, "sfx/ui/custominfopage.ui", "CustomInfoPage", &rItemSet)
+    , m_bReadOnly(false)
     , m_xPropertiesCtrl(new CustomPropertiesControl)
     , m_xAdd(m_xBuilder->weld_button("add"))
 {
@@ -2139,6 +2170,9 @@ IMPL_LINK_NOARG(SfxCustomPropertiesPage, AddHdl, weld::Button&, void)
 
 bool SfxCustomPropertiesPage::FillItemSet( SfxItemSet* rSet )
 {
+    if (m_bReadOnly)
+        return false;
+
     const SfxDocumentInfoItem* pItem = nullptr;
     SfxDocumentInfoItem* pInfo = nullptr;
     bool bMustDelete = false;
@@ -2185,6 +2219,9 @@ bool SfxCustomPropertiesPage::FillItemSet( SfxItemSet* rSet )
 
 void SfxCustomPropertiesPage::Reset( const SfxItemSet* rItemSet )
 {
+    const SfxBoolItem* pROItem = rItemSet->GetItem<SfxBoolItem>(SID_DOC_READONLY, false);
+    m_bReadOnly = pROItem && pROItem->GetValue();
+
     m_xPropertiesCtrl->ClearAllLines();
     const SfxDocumentInfoItem& rInfoItem = rItemSet->Get(SID_DOCINFO);
     std::vector< std::unique_ptr<CustomProperty> > aCustomProps = rInfoItem.GetCustomProperties();
@@ -2513,6 +2550,7 @@ void CmisPropertiesControl::AddLine( const OUString& sId, const OUString& sName,
 // class SfxCmisPropertiesPage -----------------------------------------
 SfxCmisPropertiesPage::SfxCmisPropertiesPage(weld::Container* pPage, weld::DialogController* pController, const SfxItemSet& rItemSet)
     : SfxTabPage(pPage, pController, "sfx/ui/cmisinfopage.ui", "CmisInfoPage", &rItemSet)
+    , m_bReadOnly(false)
     , m_xPropertiesCtrl(new CmisPropertiesControl(*m_xBuilder))
 {
 }
@@ -2524,6 +2562,9 @@ SfxCmisPropertiesPage::~SfxCmisPropertiesPage()
 
 bool SfxCmisPropertiesPage::FillItemSet( SfxItemSet* rSet )
 {
+    if (m_bReadOnly)
+        return false;
+
     const SfxDocumentInfoItem* pItem = nullptr;
     SfxDocumentInfoItem* pInfo = nullptr;
     bool bMustDelete = false;
@@ -2589,6 +2630,9 @@ bool SfxCmisPropertiesPage::FillItemSet( SfxItemSet* rSet )
 
 void SfxCmisPropertiesPage::Reset( const SfxItemSet* rItemSet )
 {
+    const SfxBoolItem* pROItem = rItemSet->GetItem<SfxBoolItem>(SID_DOC_READONLY, false);
+    m_bReadOnly = pROItem && pROItem->GetValue();
+
     m_xPropertiesCtrl->ClearAllLines();
     const SfxDocumentInfoItem& rInfoItem = rItemSet->Get(SID_DOCINFO);
     uno::Sequence< document::CmisProperty > aCmisProps = rInfoItem.GetCmisProperties();

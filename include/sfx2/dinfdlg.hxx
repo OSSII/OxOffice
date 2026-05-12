@@ -188,7 +188,8 @@ private:
     OUString                    m_aMultiSignedStr;
 
     bool                        bEnableUseUserData  : 1,
-                                bHandleDelete       : 1;
+                                bHandleDelete       : 1,
+                                m_bReadOnly         : 1;
 
     std::unique_ptr<weld::Image> m_xBmp;
     std::unique_ptr<weld::Label> m_xNameED;
@@ -241,6 +242,7 @@ class SfxDocumentDescPage final : public SfxTabPage
 {
 private:
     SfxDocumentInfoItem* m_pInfoItem;
+    bool m_bReadOnly;
     std::unique_ptr<weld::Entry> m_xTitleEd;
     std::unique_ptr<weld::Entry> m_xThemaEd;
     std::unique_ptr<weld::Entry> m_xKeywordsEd;
@@ -501,6 +503,7 @@ class SfxCustomPropertiesPage final : public SfxTabPage
 private:
     DECL_LINK(AddHdl, weld::Button&, void);
 
+    bool m_bReadOnly;
     std::unique_ptr<CustomPropertiesControl> m_xPropertiesCtrl;
     std::unique_ptr<weld::Button> m_xAdd;
 
@@ -618,6 +621,7 @@ public:
 class SfxCmisPropertiesPage final : public SfxTabPage
 {
 private:
+    bool m_bReadOnly;
     std::unique_ptr<CmisPropertiesControl> m_xPropertiesCtrl;
 
     virtual bool        FillItemSet( SfxItemSet* ) override;

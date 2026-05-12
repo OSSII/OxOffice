@@ -20,6 +20,8 @@
 #include <documentfontsdialog.hxx>
 
 #include <sfx2/objsh.hxx>
+#include <sfx2/sfxsids.hrc>
+#include <svl/eitem.hxx>
 
 #include <com/sun/star/beans/XPropertySet.hpp>
 #include <com/sun/star/frame/XModel.hpp>
@@ -34,6 +36,7 @@ std::unique_ptr<SfxTabPage> SfxDocumentFontsPage::Create(weld::Container* pPage,
 
 SfxDocumentFontsPage::SfxDocumentFontsPage(weld::Container* pPage, weld::DialogController* pController, const SfxItemSet& set)
     : SfxTabPage(pPage, pController, "sfx/ui/documentfontspage.ui", "DocumentFontsPage", &set)
+    , m_bReadOnly(false)
     , embedFontsCheckbox(m_xBuilder->weld_check_button("embedFonts"))
     , embedUsedFontsCheckbox(m_xBuilder->weld_check_button("embedUsedFonts"))
     , embedLatinScriptFontsCheckbox(m_xBuilder->weld_check_button("embedLatinScriptFonts"))
@@ -46,8 +49,11 @@ SfxDocumentFontsPage::~SfxDocumentFontsPage()
 {
 }
 
-void SfxDocumentFontsPage::Reset( const SfxItemSet* )
+void SfxDocumentFontsPage::Reset( const SfxItemSet* pSet )
 {
+    const SfxBoolItem* pROItem = pSet ? pSet->GetItem<SfxBoolItem>(SID_DOC_READONLY, false) : nullptr;
+    m_bReadOnly = pROItem && pROItem->GetValue();
+
     bool bEmbedFonts = false;
     bool bEmbedUsedFonts = false;
 
@@ -79,10 +85,22 @@ void SfxDocumentFontsPage::Reset( const SfxItemSet* )
     embedLatinScriptFontsCheckbox->set_active(bEmbedLatinScriptFonts);
     embedAsianScriptFontsCheckbox->set_active(bEmbedAsianScriptFonts);
     embedComplexScriptFontsCheckbox->set_active(bEmbedComplexScriptFonts);
+
+    if (m_bReadOnly)
+    {
+        embedFontsCheckbox->set_sensitive(false);
+        embedUsedFontsCheckbox->set_sensitive(false);
+        embedLatinScriptFontsCheckbox->set_sensitive(false);
+        embedAsianScriptFontsCheckbox->set_sensitive(false);
+        embedComplexScriptFontsCheckbox->set_sensitive(false);
+    }
 }
 
 bool SfxDocumentFontsPage::FillItemSet( SfxItemSet* )
 {
+    if (m_bReadOnly)
+        return false;
+
     bool bEmbedFonts = embedFontsCheckbox->get_active();
     bool bEmbedUsedFonts = embedUsedFontsCheckbox->get_active();
 
